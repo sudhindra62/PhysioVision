@@ -84,24 +84,45 @@ def load_ground_truth(json_filename):
             return json.load(f)
     return []
 
+# Make sure to import this at the top if you haven't:
+# from core.config import VIDEOS_DIR
+
 def main():
     st.set_page_config(page_title="PhysioVision Pro", layout="wide")
     st.title("PhysioVision Pro: Real-Time Movement Analysis")
 
     st.sidebar.header("Session Settings")
+    
+    # We select by the video name now to make pathing easier
     exercise_choice = st.sidebar.selectbox(
         "Select Exercise",
-        ["vid1.json", "vid2.json", "vid3.json", "vid4.json"]
+        ["vid1", "vid2", "vid3", "vid4"]
     )
 
-    reference_data = load_ground_truth(exercise_choice)
-    if reference_data:
-        st.sidebar.success(f"Loaded Reference: {exercise_choice}")
+    json_filename = f"{exercise_choice}.json"
+    mp4_filename = f"{exercise_choice}.mp4"
+    
+    # Load data and paths
+    reference_data = load_ground_truth(json_filename)
+    video_path = Path("videos") / mp4_filename
 
-    col1, col2 = st.columns([2, 1])
+    if reference_data:
+        st.sidebar.success(f"Loaded Reference: {json_filename}")
+
+    # --- NEW LAYOUT: 3 Columns ---
+    # Col 1: Reference Video | Col 2: Live Camera | Col 3: Score
+    col1, col2, col3 = st.columns([1.5, 1.5, 1])
 
     with col1:
-        st.markdown("### Live Tracking")
+        st.markdown("### 1. Watch Ideal Form")
+        if video_path.exists():
+            # autoplay and loop keep the video playing endlessly
+            st.video(str(video_path), loop=True, autoplay=True, muted=True)
+        else:
+            st.error(f"Video file not found: {video_path}")
+
+    with col2:
+        st.markdown("### 2. Live Tracking")
         webrtc_ctx = webrtc_streamer(
             key="physio-tracker",
             video_processor_factory=PhysioProcessor,
@@ -109,27 +130,31 @@ def main():
             async_processing=True
         )
 
-    with col2:
-        st.markdown("### DTW Similarity Score")
+    with col3:
+        st.markdown("### 3. Live Score")
         score_placeholder = st.empty()
         
-        # --- THE MISSING UI LOOP ---
-        # This keeps pulling the score from the background thread to the frontend
+        # UI Loop for the Score
         if webrtc_ctx.state.playing:
             if webrtc_ctx.video_processor:
-                # Inject the JSON into the camera thread
                 webrtc_ctx.video_processor.reference_data = reference_data
                 
                 while True:
                     score = webrtc_ctx.video_processor.current_score
-                    
-                    # Color code the score
                     color = "green" if score > 75 else "orange" if score > 50 else "red"
+                    
+                    # Ensure we don't show 0.0 when they are just standing still
+                    display_text = f"{score:.1f}%" if score > 0 else "Move..."
+                    
                     score_placeholder.markdown(
-                        f"<h1 style='text-align: center; color: {color}; font-size: 80px;'>{score:.1f}%</h1>", 
+                        f"""
+                        <div style='display: flex; justify-content: center; align-items: center; height: 100%;'>
+                            <h1 style='color: {color}; font-size: 80px; margin-top: 50px;'>{display_text}</h1>
+                        </div>
+                        """, 
                         unsafe_allow_html=True
                     )
-                    time.sleep(0.3) # Refresh UI every 300ms
+                    time.sleep(0.3)
 
 if __name__ == "__main__":
     main()

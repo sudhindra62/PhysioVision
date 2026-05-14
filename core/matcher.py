@@ -21,24 +21,21 @@ class DTWJudge:
         ])
 
     def calculate_similarity(self, lead_sequence: List[Dict], follow_sequence: List[Dict]) -> float:
-        """
-        Compares the Reference JSON (Lead) against the User's Live Buffer (Follow).
-        Returns a score from 0.0 to 100.0.
-        """
         if not lead_sequence or not follow_sequence:
             return 0.0
             
         lead_arr = self._dict_to_array(lead_sequence)
         follow_arr = self._dict_to_array(follow_sequence)
         
-        # Calculate DTW distance
+        # Calculate DTW distance and the optimal path
         distance, path = fastdtw(lead_arr, follow_arr, dist=euclidean)
         
-        # Normalize the score
-        # The normalization factor (e.g., 500) depends on how strict you want the judge to be.
-        # A smaller number means a harsher penalty for slight deviations.
-        max_acceptable_distance = len(follow_sequence) * 20.0 
+        # NEW LOGIC: Average distance per mapped frame
+        avg_distance = distance / len(path)
         
-        score = 100.0 * (1.0 - (distance / max_acceptable_distance))
+        # If joints are perfectly aligned, avg_distance is 0. 
+        # An avg_distance of ~60 means joints are off by an average of 10-15 degrees each.
+        # We set 80 as our "Zero Score" threshold.
+        score = 100.0 - (avg_distance * 1.25) 
         
         return float(np.clip(score, 0.0, 100.0))
