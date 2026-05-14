@@ -1,0 +1,20 @@
+# --- Core Math & AI (MindDock Logic) ---
+numpy>=1.24.0,<2.0.0
+fastdtw>=0.3.4       # For temporal alignment of user vs. reference 
+scipy>=1.10.0        # Required by fastdtw for distance metrics 
+
+# --- Vision & Pose Estimation ---
+mediapipe>=0.10.0    # REQ-2: Landmark detection engine [cite: 437, 497]
+opencv-python-headless>=4.8.0 # REQ-1: Real-time frame capture [cite: 438, 498]
+
+# --- Frontend & UI (Replaces React/FastAPI) ---
+streamlit>=1.25.0    # The main GUI framework [cite: 436, 466]
+streamlit-webrtc>=0.45.0 # Required for the 30 FPS browser-based webcam feed
+
+# --- Database & Analytics (Local Storage) ---
+# REQ-13: Replaces PostgreSQL with SQLite for local-only storage [cite: 471, 524]
+# SQLite is built into Python, no extra pip package needed for basic use.
+
+# --- Utilities ---
+python-dotenv>=1.0.0 # To safely read local configurations [cite: 191]
+pydantic>=2.0.0      # For data validation of landmarks/angles [cite: 1]
