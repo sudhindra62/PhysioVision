@@ -248,8 +248,8 @@ Contributions are welcome! 🚀
 
 # 👨‍💻 Author
 
-** Viral Bhoi and Rudra Chauhan**
-B.Tech Computer Engineering Students | Competitive Programmers | AI & Computer Vision Enthusiast
+**Viral Bhoi and Rudra Chauhan**
+B.Tech Computer Engineering Students | Competitive Programmers | AI & Computer Vision Enthusiasts
 
 ---
 
