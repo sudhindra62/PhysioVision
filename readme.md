@@ -244,16 +244,12 @@ Contributions are welcome! 🚀
 
 ---
 
-# 📜 License
 
-This project is licensed under the MIT License.
-
----
 
 # 👨‍💻 Author
 
-**Rudra Chauhan**
-B.Tech Computer Engineering Student | Competitive Programmer | AI & Computer Vision Enthusiast
+** Viral Bhoi and Rudra Chauhan**
+B.Tech Computer Engineering Students | Competitive Programmers | AI & Computer Vision Enthusiast
 
 ---
 
