@@ -33,8 +33,8 @@ class PhysioProcessor(VideoTransformerBase):
         self.judge = None
         self.joint_name = None
         
-        # Real-time metrics for the UI
-        self.metrics = {"reps": 0, "state": "INITIALIZING", "live_score": 0.0, "raw_angle": 0.0}
+        # NEW: Updated real-time metrics for the UI
+        self.metrics = {"reps": 0, "state": "INITIALIZING", "progress": 0.0, "rep_score": 0.0}
 
     def draw_skeleton(self, img, joints):
         h, w = img.shape[:2]
@@ -58,12 +58,11 @@ class PhysioProcessor(VideoTransformerBase):
             
             # Run the ROM Judge if we have a calibrated state machine
             if self.judge and self.joint_name:
+                # Calculate ALL angles
                 angles = self.math_calc.get_standard_angles(joints)
-                current_angle = angles.get(self.joint_name)
                 
-                if current_angle is not None:
-                    # The Universal State Machine does the heavy lifting
-                    self.metrics = self.judge.process_frame(current_angle)
+                # NEW: Pass the ENTIRE dictionary of angles to the judge for form checking
+                self.metrics = self.judge.process_frame(angles)
                     
         return img
 
@@ -107,10 +106,11 @@ def main():
 
     # Package the config perfectly for the existing ROMJudge
     judge_config = {
+        "primary_joint": primary_joint,
         "min_angle": joint_limits["min_angle"],
         "max_angle": joint_limits["max_angle"],
         "tolerance": physics["tolerance"],
-        "all_joints": physics["all_joints"] # Included for future form-correction upgrades!
+        "all_joints": physics["all_joints"] # Included for form-correction!
     }
 
     with st.sidebar:
@@ -154,15 +154,17 @@ def main():
             while True:
                 metrics = webrtc_ctx.video_processor.metrics
                 
-                score_color = "green" if metrics["live_score"] > 80 else "orange" if metrics["live_score"] > 40 else "red"
-                state_color = "blue" if metrics["state"] == "LIFTING" else "green" if metrics["state"] == "PEAK_REACHED" else "gray"
+                # NEW: Separate UI logic for Form Score vs Progress
+                score_color = "green" if metrics["rep_score"] > 80 else "orange" if metrics["rep_score"] > 40 else "red"
+                state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING"] else "green" if metrics["state"] == "PEAK_REACHED" else "gray"
 
                 rep_ui.markdown(f"<h1 style='text-align: center; font-size: 60px;'>Reps: {metrics['reps']}</h1>", unsafe_allow_html=True)
                 
                 score_ui.markdown(f"""
                     <div style='text-align: center;'>
-                        <h3 style='margin-bottom: 0;'>Form Score</h3>
-                        <h1 style='color: {score_color}; font-size: 80px; margin-top: -10px;'>{metrics['live_score']}%</h1>
+                        <h3 style='margin-bottom: 0;'>Last Rep Quality</h3>
+                        <h1 style='color: {score_color}; font-size: 80px; margin-top: -10px;'>{metrics['rep_score']}%</h1>
+                        <p style='color: gray; font-size: 20px;'>Current Motion: {metrics['progress']}%</p>
                     </div>
                 """, unsafe_allow_html=True)
                 

@@ -27,7 +27,6 @@ Thumbs.db
 models/*.pth
 models/*.onnx
 output/
-*.mp4
 *.avi
 *.mov
 logs/
