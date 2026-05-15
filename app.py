@@ -170,7 +170,7 @@ def main():
                 
                 state_ui.markdown(f"<h3 style='text-align: center; color: {state_color};'>{metrics['state']}</h3>", unsafe_allow_html=True)
                 
-                time.sleep(0.1)
+                # time.sleep(0.1)
 
 if __name__ == "__main__":
     main()

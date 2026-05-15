@@ -1,4 +1,94 @@
 {
+    "t1": {
+        "display_name": "T1",
+        "video_file": "t1.mp4",
+        "meta": {
+            "duration_sec": 8.0,
+            "fps": 30.0,
+            "thumbnail": "t1_thumb.jpg"
+        },
+        "physics": {
+            "primary_joint": "right_shoulder",
+            "all_joints": {
+                "left_elbow": {
+                    "min_angle": 90.3,
+                    "max_angle": 111.6,
+                    "range": 21.2
+                },
+                "right_elbow": {
+                    "min_angle": 95.6,
+                    "max_angle": 143.9,
+                    "range": 48.4
+                },
+                "left_shoulder": {
+                    "min_angle": 14.5,
+                    "max_angle": 53.9,
+                    "range": 39.4
+                },
+                "right_shoulder": {
+                    "min_angle": 19.3,
+                    "max_angle": 107.4,
+                    "range": 88.1
+                },
+                "left_knee": {
+                    "min_angle": 116.3,
+                    "max_angle": 131.5,
+                    "range": 15.2
+                },
+                "right_knee": {
+                    "min_angle": 108.4,
+                    "max_angle": 130.7,
+                    "range": 22.3
+                }
+            },
+            "tolerance": 15.0
+        }
+    },
+    "t2": {
+        "display_name": "T2",
+        "video_file": "t2.mp4",
+        "meta": {
+            "duration_sec": 11.5,
+            "fps": 29.91,
+            "thumbnail": "t2_thumb.jpg"
+        },
+        "physics": {
+            "primary_joint": "left_shoulder",
+            "all_joints": {
+                "left_elbow": {
+                    "min_angle": 90.9,
+                    "max_angle": 121.8,
+                    "range": 30.9
+                },
+                "right_elbow": {
+                    "min_angle": 90.2,
+                    "max_angle": 113.5,
+                    "range": 23.3
+                },
+                "left_shoulder": {
+                    "min_angle": 13.2,
+                    "max_angle": 102.6,
+                    "range": 89.4
+                },
+                "right_shoulder": {
+                    "min_angle": 13.6,
+                    "max_angle": 28.4,
+                    "range": 14.8
+                },
+                "left_knee": {
+                    "min_angle": 105.4,
+                    "max_angle": 134.5,
+                    "range": 29.1
+                },
+                "right_knee": {
+                    "min_angle": 113.8,
+                    "max_angle": 140.9,
+                    "range": 27.1
+                }
+            },
+            "tolerance": 15.0
+        }
+    },
     "vid1": {
         "display_name": "Vid1",
         "video_file": "vid1.mp4",
@@ -174,51 +264,6 @@
                     "min_angle": 110.3,
                     "max_angle": 143.6,
                     "range": 33.3
-                }
-            },
-            "tolerance": 15.0
-        }
-    },
-    "WhatsApp Video 2026-05-15 at 3.09.44 PM": {
-        "display_name": "Whatsapp Video 2026-05-15 At 3.09.44 Pm",
-        "video_file": "WhatsApp Video 2026-05-15 at 3.09.44 PM.mp4",
-        "meta": {
-            "duration_sec": 11.5,
-            "fps": 29.91,
-            "thumbnail": "WhatsApp Video 2026-05-15 at 3.09.44 PM_thumb.jpg"
-        },
-        "physics": {
-            "primary_joint": "left_shoulder",
-            "all_joints": {
-                "left_elbow": {
-                    "min_angle": 90.9,
-                    "max_angle": 121.8,
-                    "range": 30.9
-                },
-                "right_elbow": {
-                    "min_angle": 90.2,
-                    "max_angle": 113.5,
-                    "range": 23.3
-                },
-                "left_shoulder": {
-                    "min_angle": 13.2,
-                    "max_angle": 102.6,
-                    "range": 89.4
-                },
-                "right_shoulder": {
-                    "min_angle": 13.6,
-                    "max_angle": 28.4,
-                    "range": 14.8
-                },
-                "left_knee": {
-                    "min_angle": 105.4,
-                    "max_angle": 134.5,
-                    "range": 29.1
-                },
-                "right_knee": {
-                    "min_angle": 113.8,
-                    "max_angle": 140.9,
-                    "range": 27.1
                 }
             },
             "tolerance": 15.0
