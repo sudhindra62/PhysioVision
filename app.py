@@ -200,7 +200,7 @@ SKELETON_CONNECTIONS = [
 ]
 
 # -------------------------------------------------------------------
-# 1. THE WEBRTC THREAD (Updated for modern recv() API)
+# 1. THE WEBRTC THREAD
 # -------------------------------------------------------------------
 class PhysioProcessor(VideoProcessorBase):
     def __init__(self):
@@ -211,6 +211,13 @@ class PhysioProcessor(VideoProcessorBase):
         self.joint_name = None
         
         self.metrics = {"reps": 0, "state": "INITIALIZING", "progress": 0.0, "last_score": 0.0, "avg_score": 0.0}
+
+        # Maps our angles to the specific 3 MediaPipe points that create them
+        self.joint_dependencies = {
+            "left_elbow": [11, 13, 15], "right_elbow": [12, 14, 16],
+            "left_shoulder": [23, 11, 13], "right_shoulder": [24, 12, 14],
+            "left_knee": [23, 25, 27], "right_knee": [24, 26, 28]
+        }
 
     def draw_skeleton(self, img, joints):
         h, w = img.shape[:2]
@@ -225,7 +232,7 @@ class PhysioProcessor(VideoProcessorBase):
                 cx, cy = int(joints[idx].x * w), int(joints[idx].y * h)
                 cv2.circle(img, (cx, cy), 6, (0, 255, 0), -1)
 
-    def recv(self, frame): # <--- CHANGED FROM transform TO recv
+    def recv(self, frame): 
         img = frame.to_ndarray(format="bgr24")
         joints = self.engine.process_frame(img)
         
@@ -233,10 +240,21 @@ class PhysioProcessor(VideoProcessorBase):
             self.draw_skeleton(img, joints)
             
             if self.judge and self.joint_name:
-                angles = self.math_calc.get_standard_angles(joints)
-                self.metrics = self.judge.process_frame(angles)
+                raw_angles = self.math_calc.get_standard_angles(joints)
+                
+                # --- STRICT OCCLUSION FILTER ---
+                clean_angles = {}
+                for j_name, angle in raw_angles.items():
+                    if j_name in self.joint_dependencies:
+                        # Check if ANY of the 3 points forming this angle are hidden (visibility < 0.4)
+                        is_visible = all(joints[idx].visibility > 0.4 for idx in self.joint_dependencies[j_name])
+                        # If hidden, pass None so the Kinematics Engine takes over
+                        clean_angles[j_name] = angle if is_visible else None
+                    else:
+                        clean_angles[j_name] = angle
+                
+                self.metrics = self.judge.process_frame(clean_angles)
                     
-        # <--- CHANGED: Must return an av.VideoFrame object
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 # -------------------------------------------------------------------
