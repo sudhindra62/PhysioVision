@@ -40,3 +40,5 @@ logs/
 .env
 .env.local
 models/
+
+not_track.txt

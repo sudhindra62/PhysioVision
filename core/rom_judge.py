@@ -1,182 +1,36 @@
-# import time
-
-# class ROMJudge:
-#     def __init__(self, config):
-#         self.config = config
-#         self.state = "IDLE"
-#         self.reps = 0
-#         self.current_peak_pct = 0.0
-        
-#         self.current_rep_sequence = []
-#         self.last_rep_score = 0.0  
-#         self.total_score_accumulator = 0.0 
-#         self.average_score = 0.0 
-        
-#         # --- NEW: Kinematics & Smoothing Engine ---
-#         self.last_pct = 0.0
-#         self.smoothed_angles = {}
-#         self.velocities = {}      # Stores angular velocity (degrees per second)
-#         self.last_time = time.time()
-#         self.alpha = 0.25         # EMA Smoothing Factor
-
-#         self.rom_range = abs(self.config["max_angle"] - self.config["min_angle"])
-#         if self.rom_range == 0: self.rom_range = 1 
-#         self.tolerance_pct = self.config["tolerance"] / self.rom_range
-
-#     def _process_kinematics(self, raw_angles: dict) -> dict:
-#         """Applies EMA smoothing and uses physics to predict missing joints."""
-#         current_time = time.time()
-#         dt = current_time - self.last_time
-#         if dt <= 0: dt = 0.01 # Prevent division by zero
-        
-#         clean_angles = {}
-
-#         for joint in self.config["all_joints"].keys():
-#             raw_angle = raw_angles.get(joint)
-
-#             # Initialize if this is the first frame we've seen this joint
-#             if joint not in self.smoothed_angles:
-#                 if raw_angle is not None:
-#                     self.smoothed_angles[joint] = raw_angle
-#                     self.velocities[joint] = 0.0
-#                 continue 
-
-#             # PATH A: The joint is VISIBLE (Apply EMA and calculate velocity)
-#             if raw_angle is not None:
-#                 # Glitch rejection: If angle jumps wildly in 1 frame (AI hallucination), reject it
-#                 if abs(raw_angle - self.smoothed_angles[joint]) > 45.0:
-#                     raw_angle = None # Force it to use the physics prediction instead
-
-#             if raw_angle is not None:
-#                 smoothed = (self.alpha * raw_angle) + ((1.0 - self.alpha) * self.smoothed_angles[joint])
-#                 omega = (smoothed - self.smoothed_angles[joint]) / dt # Angular Velocity
-                
-#                 self.smoothed_angles[joint] = smoothed
-#                 self.velocities[joint] = (self.alpha * omega) + ((1.0 - self.alpha) * self.velocities.get(joint, 0.0))
-#                 clean_angles[joint] = smoothed
-
-#             # PATH B: The joint is HIDDEN (Use Kinematics to predict the future)
-#             else:
-#                 last_angle = self.smoothed_angles[joint]
-#                 velocity = self.velocities.get(joint, 0.0)
-                
-#                 # We dampen the velocity so the "ghost arm" slowly comes to a stop 
-#                 # instead of spinning forever if the camera is blocked for 10 seconds.
-#                 damped_velocity = velocity * 0.9 
-#                 predicted_angle = last_angle + (damped_velocity * dt)
-                
-#                 self.smoothed_angles[joint] = predicted_angle
-#                 self.velocities[joint] = damped_velocity
-#                 clean_angles[joint] = predicted_angle
-
-#         self.last_time = current_time
-#         return clean_angles
-
-#     def get_completion_percentage(self, current_angle: float) -> float:
-#         moved = abs(current_angle - self.config["min_angle"])
-#         pct = moved / self.rom_range
-#         return max(0.0, min(1.0, pct))
-
-#     def _evaluate_rep_sequence(self):
-#         if not self.current_rep_sequence: return 0.0
-
-#         penalty = 0.0
-#         primary = self.config["primary_joint"]
-
-#         for frame_angles in self.current_rep_sequence:
-#             for joint, limits in self.config["all_joints"].items():
-#                 if joint == primary: continue 
-                
-#                 angle = frame_angles.get(joint)
-#                 if angle and angle > 10.0: # Ignore completely zeroed out joints
-#                     if angle > limits["max_angle"] + 15.0 or angle < limits["min_angle"] - 15.0:
-#                         penalty += 0.4 # Accumulate form penalty
-        
-#         final_score = 100.0 - penalty
-#         return round(max(0.0, min(100.0, final_score)), 1)
-
-#     def process_frame(self, raw_angles: dict) -> dict:
-#         # 1. Run the physics engine to get perfect, unbroken tracking
-#         clean_angles = self._process_kinematics(raw_angles)
-        
-#         primary_angle = clean_angles.get(self.config["primary_joint"], self.config["min_angle"])
-#         pct = self.get_completion_percentage(primary_angle)
-        
-#         target_peak_pct = 1.0 - self.tolerance_pct
-#         target_rest_pct = 0.0 + (self.tolerance_pct * 1.5) 
-
-#         # --- DYNAMIC STATE MACHINE ---
-#         if self.state in ["LIFTING", "PEAK_REACHED", "LOWERING"]:
-#             self.current_rep_sequence.append(clean_angles)
-
-#         if self.state == "IDLE" and pct > target_rest_pct:
-#             self.state = "LIFTING"
-#             self.current_peak_pct = pct
-#             self.current_rep_sequence = [clean_angles] 
-
-#         elif self.state == "LIFTING":
-#             if pct > self.current_peak_pct: self.current_peak_pct = pct
-#             if pct >= target_peak_pct: self.state = "PEAK_REACHED"
-
-#         elif self.state == "PEAK_REACHED":
-#             if pct < target_peak_pct - 0.05: self.state = "LOWERING"
-
-#         elif self.state == "LOWERING":
-#             # REVERSAL FIX: Rep completes if they hit bottom OR suddenly start lifting again
-#             is_at_bottom = pct < target_rest_pct
-#             is_lifting_again = pct > self.last_pct + 0.08 
-            
-#             if is_at_bottom or is_lifting_again:
-#                 if len(self.current_rep_sequence) > 10: # Debouncer to kill jitter fake-reps
-#                     self.reps += 1
-#                     self.last_rep_score = self._evaluate_rep_sequence()
-                    
-#                     self.total_score_accumulator += self.last_rep_score
-#                     self.average_score = self.total_score_accumulator / self.reps
-                
-#                 # Seamlessly transition into the next rep if they reversed direction early
-#                 self.state = "LIFTING" if is_lifting_again else "IDLE"
-#                 self.current_peak_pct = pct if is_lifting_again else 0.0
-#                 self.current_rep_sequence = [clean_angles] if is_lifting_again else []
-
-#         self.last_pct = pct
-
-#         return {
-#             "reps": self.reps,
-#             "state": self.state,
-#             "progress": round(pct * 100, 1), 
-#             "last_score": self.last_rep_score,
-#             "avg_score": round(self.average_score, 1)
-#         }
-
 import time
+from typing import Dict, List
 
 class ROMJudge:
-    def __init__(self, config):
+    def __init__(self, config: dict):
         self.config = config
         self.state = "IDLE"
         self.reps = 0
         
-        self.current_peak_pct = 0.0
-        self.current_valley_pct = 1.0 # NEW: Tracks the bottom of a fast rep
-        
-        self.current_rep_sequence = []
+        # Session Metrics
         self.last_rep_score = 0.0  
         self.total_score_accumulator = 0.0 
         self.average_score = 0.0 
         
+        # Kinematics
         self.last_pct = 0.0
         self.smoothed_angles = {}
         self.velocities = {}      
         self.last_time = time.time()
-        
-        # FIX 1: Increased Alpha from 0.25 to 0.40. 
-        # Fast exercises need less smoothing so we don't chop off the peaks!
         self.alpha = 0.40         
 
-        self.rom_range = abs(self.config["max_angle"] - self.config["min_angle"])
+        # Configuration
+        self.primary_joint = self.config["primary_joint"]
+        self.active_joints = list(self.config["all_joints"].keys())
+        self.golden_trajectory = self.config.get("golden_trajectory", [])
+
+        self.rom_range = abs(self.config["all_joints"][self.primary_joint]["max_angle"] - self.config["all_joints"][self.primary_joint]["min_angle"])
         if self.rom_range == 0: self.rom_range = 1 
-        self.tolerance_pct = self.config["tolerance"] / self.rom_range
+        
+        # Phase Tracking Variables
+        self.phase_errors = []
+        self.max_achieved_pct = 0.0
+        self.current_valley_pct = 1.0
 
     def _process_kinematics(self, raw_angles: dict) -> dict:
         current_time = time.time()
@@ -185,7 +39,7 @@ class ROMJudge:
         
         clean_angles = {}
 
-        for joint in self.config["all_joints"].keys():
+        for joint in self.active_joints:
             raw_angle = raw_angles.get(joint)
 
             if joint not in self.smoothed_angles:
@@ -201,14 +55,12 @@ class ROMJudge:
             if raw_angle is not None:
                 smoothed = (self.alpha * raw_angle) + ((1.0 - self.alpha) * self.smoothed_angles[joint])
                 omega = (smoothed - self.smoothed_angles[joint]) / dt 
-                
                 self.smoothed_angles[joint] = smoothed
                 self.velocities[joint] = (self.alpha * omega) + ((1.0 - self.alpha) * self.velocities.get(joint, 0.0))
                 clean_angles[joint] = smoothed
             else:
                 last_angle = self.smoothed_angles[joint]
                 velocity = self.velocities.get(joint, 0.0)
-                
                 damped_velocity = velocity * 0.9 
                 predicted_angle = last_angle + (damped_velocity * dt)
                 
@@ -220,80 +72,127 @@ class ROMJudge:
         return clean_angles
 
     def get_completion_percentage(self, current_angle: float) -> float:
-        moved = abs(current_angle - self.config["min_angle"])
+        moved = abs(current_angle - self.config["all_joints"][self.primary_joint]["min_angle"])
         pct = moved / self.rom_range
         return max(0.0, min(1.0, pct))
 
-    def _evaluate_rep_sequence(self):
-        if not self.current_rep_sequence: return 0.0
+    def _calculate_frame_accuracy(self, user_angles: dict, current_pct: float) -> float:
+        """
+        Takes the user's current progress (e.g. 50% lifted) and finds the frame in the 
+        Golden Trajectory where the expert was also at 50% lifted. 
+        Then, grades the user's overall posture against the expert's posture.
+        """
+        if not self.golden_trajectory: return 100.0
 
-        penalty = 0.0
-        primary = self.config["primary_joint"]
+        target_angle = user_angles.get(self.primary_joint, 0.0)
 
-        for frame_angles in self.current_rep_sequence:
-            for joint, limits in self.config["all_joints"].items():
-                if joint == primary: continue 
-                
-                angle = frame_angles.get(joint)
-                if angle and angle > 10.0: 
-                    if angle > limits["max_angle"] + 15.0 or angle < limits["min_angle"] - 15.0:
-                        penalty += 0.4 
+        # 1. Find the closest trajectory frame based on the Primary Joint's angle
+        best_frame = min(self.golden_trajectory, key=lambda f: abs(f.get(self.primary_joint, 0.0) - target_angle))
+
+        # 2. Check the posture of ALL OTHER joints
+        error_sum = 0.0
+        joints_compared = 0
+
+        for joint in self.active_joints:
+            if joint == self.primary_joint: continue # We already aligned via primary
+            
+            u_ang = user_angles.get(joint)
+            g_ang = best_frame.get(joint)
+
+            if u_ang is not None and g_ang is not None:
+                error_sum += abs(u_ang - g_ang)
+                joints_compared += 1
+
+        if joints_compared == 0: return 100.0
+
+        avg_joint_error_degrees = error_sum / joints_compared
         
-        final_score = 100.0 - penalty
-        return round(max(0.0, min(100.0, final_score)), 1)
+        # Scoring Math: 0 degrees off = 100%. 30+ degrees off = 0%.
+        frame_score = max(0.0, 100.0 - (avg_joint_error_degrees * 3.33))
+        return frame_score
 
     def process_frame(self, raw_angles: dict) -> dict:
         clean_angles = self._process_kinematics(raw_angles)
         
-        primary_angle = clean_angles.get(self.config["primary_joint"], self.config["min_angle"])
+        primary_angle = clean_angles.get(self.primary_joint, self.config["all_joints"][self.primary_joint]["min_angle"])
         pct = self.get_completion_percentage(primary_angle)
         
-        target_peak_pct = 1.0 - self.tolerance_pct
-        target_rest_pct = 0.0 + (self.tolerance_pct * 1.5) 
+        # Strict Checkpoint Gates
+        target_peak_pct = 0.85  # Must pass 85% to unlock peak phase
+        target_rest_pct = 0.15  # Must drop below 15% to finish rep
 
-        # --- THE CONTINUOUS CYCLIC STATE MACHINE ---
-        if self.state in ["LIFTING", "PEAK_REACHED", "LOWERING"]:
-            self.current_rep_sequence.append(clean_angles)
+        # -------------------------------------------------------------------
+        # STRICT PHASE-GATED STATE MACHINE
+        # -------------------------------------------------------------------
+        
+        if self.state == "IDLE":
+            if pct < target_rest_pct:
+                self.state = "READY"
 
-        if self.state == "IDLE" and pct > target_rest_pct:
-            self.state = "LIFTING"
-            self.current_peak_pct = pct
-            self.current_rep_sequence = [clean_angles] 
+        elif self.state == "READY":
+            if pct > target_rest_pct:
+                self.state = "LIFTING"
+                self.phase_errors = []
+                self.max_achieved_pct = pct
 
         elif self.state == "LIFTING":
-            if pct > self.current_peak_pct: 
-                self.current_peak_pct = pct
-            if pct >= target_peak_pct: 
+            self.max_achieved_pct = max(self.max_achieved_pct, pct)
+            self.phase_errors.append(self._calculate_frame_accuracy(clean_angles, pct))
+
+            if pct >= target_peak_pct:
+                # Checkpoint 1 Unlocked
                 self.state = "PEAK_REACHED"
+            elif pct < target_rest_pct:
+                # ABORTED REP: They dropped back down without hitting the peak.
+                self.state = "READY" 
 
         elif self.state == "PEAK_REACHED":
-            if pct < target_peak_pct - 0.05: 
+            self.max_achieved_pct = max(self.max_achieved_pct, pct)
+            if pct < target_peak_pct - 0.05:
                 self.state = "LOWERING"
-                self.current_valley_pct = pct # Initialize the valley tracker as we start dropping
-
-        elif self.state == "LOWERING":
-            # Track the absolute lowest point of this drop
-            if pct < self.current_valley_pct:
                 self.current_valley_pct = pct
 
-            is_at_bottom = pct < target_rest_pct
-            
-            # FIX 2: Valley Detection. Are we 5% higher than the deepest point we just hit?
-            is_lifting_again = pct > self.current_valley_pct + 0.05 
-            
-            if is_at_bottom or is_lifting_again:
-                # FIX 3: Lowered debounce from 10 to 5 to catch extremely fast movements
-                if len(self.current_rep_sequence) > 5: 
-                    self.reps += 1
-                    self.last_rep_score = self._evaluate_rep_sequence()
-                    
-                    self.total_score_accumulator += self.last_rep_score
-                    self.average_score = self.total_score_accumulator / self.reps
+        elif self.state == "LOWERING":
+            self.current_valley_pct = min(self.current_valley_pct, pct)
+            self.phase_errors.append(self._calculate_frame_accuracy(clean_angles, pct))
+
+            if pct <= target_rest_pct:
+                # Checkpoint 2 Unlocked: PERFECT REP
+                self.state = "FINISH"
                 
-                # Loop straight back into lifting!
-                self.state = "LIFTING" if is_lifting_again else "IDLE"
-                self.current_peak_pct = pct if is_lifting_again else 0.0
-                self.current_rep_sequence = [clean_angles] if is_lifting_again else []
+            elif pct > self.current_valley_pct + 0.15:
+                # BYPASS ATTEMPT DETECTED: They started lifting again without hitting the bottom
+                self.state = "FINISH" 
+
+        # --- SCORING & RESET BLOCK ---
+        if self.state == "FINISH":
+            self.reps += 1
+
+            # 1. Base Posture Score (Average of all frame accuracies)
+            base_accuracy = sum(self.phase_errors) / len(self.phase_errors) if self.phase_errors else 0.0
+
+            # 2. ROM Bypass Penalties
+            rom_penalty = 0.0
+            
+            if pct > target_rest_pct + 0.1: 
+                # Short-repped the bottom (e.g. stopped at 40%, penalty is 40 points)
+                rom_penalty += (pct * 100) 
+
+            if self.max_achieved_pct < target_peak_pct: 
+                # Short-repped the top
+                rom_penalty += ((1.0 - self.max_achieved_pct) * 100)
+
+            # Final Calculation
+            final_score = round(max(0.0, base_accuracy - rom_penalty), 1)
+
+            self.last_rep_score = final_score
+            self.total_score_accumulator += self.last_rep_score
+            self.average_score = self.total_score_accumulator / self.reps
+
+            # Reset for the next repetition
+            self.state = "READY"
+            self.phase_errors = []
+            self.max_achieved_pct = 0.0
 
         self.last_pct = pct
 

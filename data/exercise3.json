@@ -1,0 +1,1993 @@
+[
+    {
+        "frame": 1,
+        "angles": {
+            "left_elbow": 90.43802867682416,
+            "right_elbow": 106.94579995222091,
+            "left_shoulder": 21.926112965139673,
+            "right_shoulder": 15.199136380884942,
+            "left_knee": 120.67347374430715,
+            "right_knee": 111.43682019166455
+        }
+    },
+    {
+        "frame": 2,
+        "angles": {
+            "left_elbow": 95.04819721874905,
+            "right_elbow": 112.72278535104918,
+            "left_shoulder": 30.443935674073924,
+            "right_shoulder": 17.215885828069503,
+            "left_knee": 116.2508780598099,
+            "right_knee": 106.50087933497369
+        }
+    },
+    {
+        "frame": 3,
+        "angles": {
+            "left_elbow": 95.38519832102854,
+            "right_elbow": 110.00075510507362,
+            "left_shoulder": 27.36401144937881,
+            "right_shoulder": 16.86383755855634,
+            "left_knee": 118.11269328247447,
+            "right_knee": 108.31087773754606
+        }
+    },
+    {
+        "frame": 4,
+        "angles": {
+            "left_elbow": 95.78222805194645,
+            "right_elbow": 111.9550527534285,
+            "left_shoulder": 28.813683284547274,
+            "right_shoulder": 16.655551487199656,
+            "left_knee": 117.96919230657069,
+            "right_knee": 107.3887434172714
+        }
+    },
+    {
+        "frame": 5,
+        "angles": {
+            "left_elbow": 92.11657846966392,
+            "right_elbow": 108.42844263330294,
+            "left_shoulder": 22.653529136203694,
+            "right_shoulder": 15.210306229596416,
+            "left_knee": 121.64943865241483,
+            "right_knee": 110.54185097713598
+        }
+    },
+    {
+        "frame": 6,
+        "angles": {
+            "left_elbow": 94.30394330100214,
+            "right_elbow": 110.41447553388304,
+            "left_shoulder": 23.39457754109471,
+            "right_shoulder": 15.378472433842896,
+            "left_knee": 122.39720940065071,
+            "right_knee": 111.1818830668586
+        }
+    },
+    {
+        "frame": 7,
+        "angles": {
+            "left_elbow": 95.78065136369722,
+            "right_elbow": 114.45846189204144,
+            "left_shoulder": 28.098675940683286,
+            "right_shoulder": 16.12943572549914,
+            "left_knee": 119.7970567987639,
+            "right_knee": 106.1304258167204
+        }
+    },
+    {
+        "frame": 8,
+        "angles": {
+            "left_elbow": 94.99219188178166,
+            "right_elbow": 114.72157748463378,
+            "left_shoulder": 28.178831242326915,
+            "right_shoulder": 16.306469625243817,
+            "left_knee": 122.3078996560761,
+            "right_knee": 106.26383332824781
+        }
+    },
+    {
+        "frame": 9,
+        "angles": {
+            "left_elbow": 95.94445353074211,
+            "right_elbow": 115.11834036923247,
+            "left_shoulder": 26.14637802010877,
+            "right_shoulder": 16.20816027370973,
+            "left_knee": 121.51748200611694,
+            "right_knee": 105.48578561140123
+        }
+    },
+    {
+        "frame": 10,
+        "angles": {
+            "left_elbow": 94.85075852634459,
+            "right_elbow": 114.65918655159798,
+            "left_shoulder": 27.208552278538914,
+            "right_shoulder": 16.202665585526383,
+            "left_knee": 123.8195489830101,
+            "right_knee": 106.72522683831657
+        }
+    },
+    {
+        "frame": 11,
+        "angles": {
+            "left_elbow": 94.50484482841884,
+            "right_elbow": 119.05170860705233,
+            "left_shoulder": 29.08399928550761,
+            "right_shoulder": 17.31981012659029,
+            "left_knee": 123.74764785750418,
+            "right_knee": 106.22677865461674
+        }
+    },
+    {
+        "frame": 12,
+        "angles": {
+            "left_elbow": 93.53236662576076,
+            "right_elbow": 116.7845063563589,
+            "left_shoulder": 32.02377260502396,
+            "right_shoulder": 17.08383326295808,
+            "left_knee": 120.19761542349056,
+            "right_knee": 105.63526274752905
+        }
+    },
+    {
+        "frame": 13,
+        "angles": {
+            "left_elbow": 93.82367131032983,
+            "right_elbow": 111.66294721069924,
+            "left_shoulder": 29.19769751913191,
+            "right_shoulder": 16.677831475499183,
+            "left_knee": 118.51972175057365,
+            "right_knee": 107.122280686166
+        }
+    },
+    {
+        "frame": 14,
+        "angles": {
+            "left_elbow": 93.0161860250598,
+            "right_elbow": 112.4979603030184,
+            "left_shoulder": 28.158992098913846,
+            "right_shoulder": 16.011747832939704,
+            "left_knee": 118.10418248262783,
+            "right_knee": 110.94241404952518
+        }
+    },
+    {
+        "frame": 15,
+        "angles": {
+            "left_elbow": 92.25364463903304,
+            "right_elbow": 109.9081380465274,
+            "left_shoulder": 23.448647254153368,
+            "right_shoulder": 15.754005577997281,
+            "left_knee": 121.0380289981925,
+            "right_knee": 109.29446028079458
+        }
+    },
+    {
+        "frame": 16,
+        "angles": {
+            "left_elbow": 92.38399262258116,
+            "right_elbow": 107.40090172463364,
+            "left_shoulder": 18.951049746911103,
+            "right_shoulder": 16.104366563281168,
+            "left_knee": 123.59804869907272,
+            "right_knee": 111.95942058701326
+        }
+    },
+    {
+        "frame": 17,
+        "angles": {
+            "left_elbow": 91.37694080609934,
+            "right_elbow": 110.34757190415247,
+            "left_shoulder": 23.971011707378935,
+            "right_shoulder": 16.102899137684414,
+            "left_knee": 117.64821828975961,
+            "right_knee": 109.92971752306295
+        }
+    },
+    {
+        "frame": 18,
+        "angles": {
+            "left_elbow": 90.84947691552132,
+            "right_elbow": 112.39206467943228,
+            "left_shoulder": 28.050929781561734,
+            "right_shoulder": 16.211166204420213,
+            "left_knee": 118.65688657656149,
+            "right_knee": 110.84707880690178
+        }
+    },
+    {
+        "frame": 19,
+        "angles": {
+            "left_elbow": 92.23889347099616,
+            "right_elbow": 111.34285446348417,
+            "left_shoulder": 31.39123816154435,
+            "right_shoulder": 17.781839376183676,
+            "left_knee": 118.60223898852557,
+            "right_knee": 106.56488574714248
+        }
+    },
+    {
+        "frame": 20,
+        "angles": {
+            "left_elbow": 93.91532155426425,
+            "right_elbow": 114.68574251851109,
+            "left_shoulder": 33.59510474333133,
+            "right_shoulder": 17.997274987713975,
+            "left_knee": 120.33674878576673,
+            "right_knee": 106.40540728230629
+        }
+    },
+    {
+        "frame": 21,
+        "angles": {
+            "left_elbow": 91.84674340685416,
+            "right_elbow": 110.72372441854955,
+            "left_shoulder": 33.40690887664728,
+            "right_shoulder": 20.106278753001405,
+            "left_knee": 114.75764064060984,
+            "right_knee": 106.06476631452854
+        }
+    },
+    {
+        "frame": 22,
+        "angles": {
+            "left_elbow": 90.92548994638382,
+            "right_elbow": 111.04477827131939,
+            "left_shoulder": 30.05326674984382,
+            "right_shoulder": 16.291833731023793,
+            "left_knee": 120.1803798202736,
+            "right_knee": 108.39991503682828
+        }
+    },
+    {
+        "frame": 23,
+        "angles": {
+            "left_elbow": 89.8798235072488,
+            "right_elbow": 110.56789487587538,
+            "left_shoulder": 34.40929057656797,
+            "right_shoulder": 18.15034739374199,
+            "left_knee": 115.57034647395662,
+            "right_knee": 106.13885839109896
+        }
+    },
+    {
+        "frame": 24,
+        "angles": {
+            "left_elbow": 91.52321316993837,
+            "right_elbow": 110.91107461988425,
+            "left_shoulder": 32.687727720564126,
+            "right_shoulder": 18.10271962599467,
+            "left_knee": 118.05953237409909,
+            "right_knee": 106.06936235452604
+        }
+    },
+    {
+        "frame": 25,
+        "angles": {
+            "left_elbow": 90.57233507995107,
+            "right_elbow": 108.90001800187882,
+            "left_shoulder": 27.481696214716376,
+            "right_shoulder": 15.863787774817864,
+            "left_knee": 121.68135666500926,
+            "right_knee": 107.3907990126784
+        }
+    },
+    {
+        "frame": 26,
+        "angles": {
+            "left_elbow": 89.05315981063887,
+            "right_elbow": 107.7101899994871,
+            "left_shoulder": 28.349304621961032,
+            "right_shoulder": 16.845421818860814,
+            "left_knee": 114.70737381321936,
+            "right_knee": 102.6717355507762
+        }
+    },
+    {
+        "frame": 27,
+        "angles": {
+            "left_elbow": 91.99076596890596,
+            "right_elbow": 110.2747988870969,
+            "left_shoulder": 29.204662159484318,
+            "right_shoulder": 17.574006749707284,
+            "left_knee": 119.2520035531196,
+            "right_knee": 106.44067796132713
+        }
+    },
+    {
+        "frame": 28,
+        "angles": {
+            "left_elbow": 90.23267169753873,
+            "right_elbow": 110.46744992133969,
+            "left_shoulder": 29.833839368866123,
+            "right_shoulder": 17.281705940896774,
+            "left_knee": 117.42018192618669,
+            "right_knee": 106.1631643269983
+        }
+    },
+    {
+        "frame": 29,
+        "angles": {
+            "left_elbow": 90.49968854148854,
+            "right_elbow": 108.68943677013917,
+            "left_shoulder": 27.273164094258913,
+            "right_shoulder": 16.259231019430207,
+            "left_knee": 118.56237585537072,
+            "right_knee": 106.5317628675442
+        }
+    },
+    {
+        "frame": 30,
+        "angles": {
+            "left_elbow": 91.33336447357425,
+            "right_elbow": 110.77569705307276,
+            "left_shoulder": 26.804314680286918,
+            "right_shoulder": 15.740482010107383,
+            "left_knee": 118.90576123137195,
+            "right_knee": 108.61667890099726
+        }
+    },
+    {
+        "frame": 31,
+        "angles": {
+            "left_elbow": 89.3726016752886,
+            "right_elbow": 111.52274087566796,
+            "left_shoulder": 29.055025380561492,
+            "right_shoulder": 16.04351359961866,
+            "left_knee": 117.10411221504539,
+            "right_knee": 107.88680051927498
+        }
+    },
+    {
+        "frame": 32,
+        "angles": {
+            "left_elbow": 91.78144881426638,
+            "right_elbow": 112.38843312394987,
+            "left_shoulder": 29.248658703596632,
+            "right_shoulder": 15.835400409547294,
+            "left_knee": 117.4492476764078,
+            "right_knee": 106.86267723825746
+        }
+    },
+    {
+        "frame": 33,
+        "angles": {
+            "left_elbow": 90.7594287515902,
+            "right_elbow": 110.12393203755319,
+            "left_shoulder": 26.286598235806295,
+            "right_shoulder": 15.122529731754437,
+            "left_knee": 118.22233355732362,
+            "right_knee": 110.03414882917546
+        }
+    },
+    {
+        "frame": 34,
+        "angles": {
+            "left_elbow": 91.30970194623437,
+            "right_elbow": 110.2731562408829,
+            "left_shoulder": 24.060934882505,
+            "right_shoulder": 17.07899116362206,
+            "left_knee": 121.54987091083485,
+            "right_knee": 110.27015969806985
+        }
+    },
+    {
+        "frame": 35,
+        "angles": {
+            "left_elbow": 91.19279199254012,
+            "right_elbow": 109.2146143515212,
+            "left_shoulder": 19.505843496348845,
+            "right_shoulder": 18.947470770790346,
+            "left_knee": 120.77620921499643,
+            "right_knee": 108.51386390067128
+        }
+    },
+    {
+        "frame": 36,
+        "angles": {
+            "left_elbow": 90.53096271164048,
+            "right_elbow": 108.68827457837054,
+            "left_shoulder": 23.04006928495924,
+            "right_shoulder": 16.499745215830675,
+            "left_knee": 117.77055650722129,
+            "right_knee": 106.14323929909214
+        }
+    },
+    {
+        "frame": 37,
+        "angles": {
+            "left_elbow": 92.24851820931248,
+            "right_elbow": 113.23809374407526,
+            "left_shoulder": 23.819515143256822,
+            "right_shoulder": 18.0946982853447,
+            "left_knee": 122.44414341542655,
+            "right_knee": 112.1394279631775
+        }
+    },
+    {
+        "frame": 38,
+        "angles": {
+            "left_elbow": 92.2692192167969,
+            "right_elbow": 115.10879402411355,
+            "left_shoulder": 25.132614846080823,
+            "right_shoulder": 18.58086572237939,
+            "left_knee": 121.44223994164606,
+            "right_knee": 109.95595411401052
+        }
+    },
+    {
+        "frame": 39,
+        "angles": {
+            "left_elbow": 93.51974873473235,
+            "right_elbow": 117.56321637130773,
+            "left_shoulder": 25.82528204326297,
+            "right_shoulder": 19.81794763216652,
+            "left_knee": 123.62370412331386,
+            "right_knee": 108.94746503118581
+        }
+    },
+    {
+        "frame": 40,
+        "angles": {
+            "left_elbow": 91.18667304063874,
+            "right_elbow": 107.04146134665473,
+            "left_shoulder": 22.268044817108912,
+            "right_shoulder": 16.818648363159994,
+            "left_knee": 130.69218427580284,
+            "right_knee": 115.45447846333849
+        }
+    },
+    {
+        "frame": 41,
+        "angles": {
+            "left_elbow": 88.9395771826945,
+            "right_elbow": 103.25540612072369,
+            "left_shoulder": 24.927704974386955,
+            "right_shoulder": 15.92569327930265,
+            "left_knee": 124.87851465155285,
+            "right_knee": 114.76272402009602
+        }
+    },
+    {
+        "frame": 42,
+        "angles": {
+            "left_elbow": 90.44884382261164,
+            "right_elbow": 103.20129486434351,
+            "left_shoulder": 25.608180078296765,
+            "right_shoulder": 17.61937666026381,
+            "left_knee": 131.76784089965165,
+            "right_knee": 120.497101534535
+        }
+    },
+    {
+        "frame": 43,
+        "angles": {
+            "left_elbow": 89.94465570866517,
+            "right_elbow": 102.50525920154992,
+            "left_shoulder": 27.772151682366506,
+            "right_shoulder": 21.596582209427964,
+            "left_knee": 126.52198475746131,
+            "right_knee": 115.8590330812314
+        }
+    },
+    {
+        "frame": 44,
+        "angles": {
+            "left_elbow": 95.07178173853967,
+            "right_elbow": 100.7814326634325,
+            "left_shoulder": 35.263986712159436,
+            "right_shoulder": 29.640641656601186,
+            "left_knee": 126.04961169472669,
+            "right_knee": 116.53794065982503
+        }
+    },
+    {
+        "frame": 45,
+        "angles": {
+            "left_elbow": 101.68337527614,
+            "right_elbow": 106.55063168654965,
+            "left_shoulder": 36.90979984165504,
+            "right_shoulder": 33.54971710110991,
+            "left_knee": 122.49454152859865,
+            "right_knee": 113.56394456314723
+        }
+    },
+    {
+        "frame": 46,
+        "angles": {
+            "left_elbow": 101.83295662566194,
+            "right_elbow": 105.92662760327465,
+            "left_shoulder": 37.30668839602962,
+            "right_shoulder": 35.31023041395242,
+            "left_knee": 121.68974207138076,
+            "right_knee": 113.01190634592658
+        }
+    },
+    {
+        "frame": 47,
+        "angles": {
+            "left_elbow": 96.19029161019482,
+            "right_elbow": 102.39305141749635,
+            "left_shoulder": 42.29014854076218,
+            "right_shoulder": 42.83187196359584,
+            "left_knee": 120.36670610341194,
+            "right_knee": 111.95713015889824
+        }
+    },
+    {
+        "frame": 48,
+        "angles": {
+            "left_elbow": 103.50937500820484,
+            "right_elbow": 105.27457559247209,
+            "left_shoulder": 50.35102987213786,
+            "right_shoulder": 46.31138718862675,
+            "left_knee": 121.23829372074958,
+            "right_knee": 111.50629911596154
+        }
+    },
+    {
+        "frame": 49,
+        "angles": {
+            "left_elbow": 104.37143824845583,
+            "right_elbow": 109.89582700555597,
+            "left_shoulder": 55.98089710933871,
+            "right_shoulder": 55.58245036482585,
+            "left_knee": 117.1254696856358,
+            "right_knee": 105.55730625644752
+        }
+    },
+    {
+        "frame": 50,
+        "angles": {
+            "left_elbow": 102.46268138795041,
+            "right_elbow": 112.98984599362281,
+            "left_shoulder": 60.117075927869195,
+            "right_shoulder": 62.792956908859615,
+            "left_knee": 118.81532132303852,
+            "right_knee": 107.0128091105706
+        }
+    },
+    {
+        "frame": 51,
+        "angles": {
+            "left_elbow": 103.69933751121847,
+            "right_elbow": 120.66093617409645,
+            "left_shoulder": 64.46573237658204,
+            "right_shoulder": 71.23488958209778,
+            "left_knee": 121.64285699189558,
+            "right_knee": 112.10789322420999
+        }
+    },
+    {
+        "frame": 52,
+        "angles": {
+            "left_elbow": 103.3575376327581,
+            "right_elbow": 123.24291271528352,
+            "left_shoulder": 68.53529378274695,
+            "right_shoulder": 79.58635471795627,
+            "left_knee": 120.58658230888386,
+            "right_knee": 111.88960173451308
+        }
+    },
+    {
+        "frame": 53,
+        "angles": {
+            "left_elbow": 107.06970044693536,
+            "right_elbow": 124.15825723670201,
+            "left_shoulder": 74.19501641997189,
+            "right_shoulder": 80.97345627700633,
+            "left_knee": 121.80222978953458,
+            "right_knee": 115.62482351511899
+        }
+    },
+    {
+        "frame": 54,
+        "angles": {
+            "left_elbow": 109.58280712657621,
+            "right_elbow": 128.25027417889848,
+            "left_shoulder": 78.78079862457307,
+            "right_shoulder": 86.89058872235465,
+            "left_knee": 124.32765302340334,
+            "right_knee": 118.18606206407134
+        }
+    },
+    {
+        "frame": 55,
+        "angles": {
+            "left_elbow": 116.29844135167318,
+            "right_elbow": 129.9246745012181,
+            "left_shoulder": 88.144736608148,
+            "right_shoulder": 91.2407043976464,
+            "left_knee": 120.68713740223058,
+            "right_knee": 114.9417764475033
+        }
+    },
+    {
+        "frame": 56,
+        "angles": {
+            "left_elbow": 125.36035260971452,
+            "right_elbow": 138.5352247369559,
+            "left_shoulder": 94.49288303087043,
+            "right_shoulder": 95.2854747655911,
+            "left_knee": 118.6539472751251,
+            "right_knee": 110.88395808824573
+        }
+    },
+    {
+        "frame": 57,
+        "angles": {
+            "left_elbow": 126.9199758179968,
+            "right_elbow": 138.4199862086306,
+            "left_shoulder": 99.31154753036715,
+            "right_shoulder": 97.38332604962017,
+            "left_knee": 121.37638550532296,
+            "right_knee": 115.62667970123574
+        }
+    },
+    {
+        "frame": 58,
+        "angles": {
+            "left_elbow": 136.88863563142007,
+            "right_elbow": 146.72918872573655,
+            "left_shoulder": 100.8953780862499,
+            "right_shoulder": 98.17308775426244,
+            "left_knee": 123.6450852421754,
+            "right_knee": 118.69460053352866
+        }
+    },
+    {
+        "frame": 59,
+        "angles": {
+            "left_elbow": 134.43096065570856,
+            "right_elbow": 146.26546561227627,
+            "left_shoulder": 102.68920363254276,
+            "right_shoulder": 101.2159380317203,
+            "left_knee": 121.85385034169632,
+            "right_knee": 115.51535990858375
+        }
+    },
+    {
+        "frame": 60,
+        "angles": {
+            "left_elbow": 144.96984186545632,
+            "right_elbow": 152.7057635755678,
+            "left_shoulder": 100.21002598084718,
+            "right_shoulder": 96.6863640442426,
+            "left_knee": 128.10290206644171,
+            "right_knee": 120.22683275745125
+        }
+    },
+    {
+        "frame": 61,
+        "angles": {
+            "left_elbow": 135.83957459474257,
+            "right_elbow": 147.22626220932628,
+            "left_shoulder": 106.05881860030269,
+            "right_shoulder": 106.31936824103025,
+            "left_knee": 126.62953056861973,
+            "right_knee": 115.69925019929917
+        }
+    },
+    {
+        "frame": 62,
+        "angles": {
+            "left_elbow": 135.6253238553582,
+            "right_elbow": 143.824054582161,
+            "left_shoulder": 107.34874725034513,
+            "right_shoulder": 104.57307686779664,
+            "left_knee": 123.95105399510088,
+            "right_knee": 113.84222613216438
+        }
+    },
+    {
+        "frame": 63,
+        "angles": {
+            "left_elbow": 132.7969859758751,
+            "right_elbow": 144.24207769985,
+            "left_shoulder": 106.9376346118925,
+            "right_shoulder": 107.31126769996985,
+            "left_knee": 127.27476413746022,
+            "right_knee": 120.37546197198294
+        }
+    },
+    {
+        "frame": 64,
+        "angles": {
+            "left_elbow": 136.52287801581912,
+            "right_elbow": 146.2373865296958,
+            "left_shoulder": 106.30810351687629,
+            "right_shoulder": 104.9751908017829,
+            "left_knee": 125.60449026736148,
+            "right_knee": 116.71669659179918
+        }
+    },
+    {
+        "frame": 65,
+        "angles": {
+            "left_elbow": 137.30412478070514,
+            "right_elbow": 148.56104562959305,
+            "left_shoulder": 106.38462541202844,
+            "right_shoulder": 105.68194329673358,
+            "left_knee": 127.90728333335552,
+            "right_knee": 115.57670083959249
+        }
+    },
+    {
+        "frame": 66,
+        "angles": {
+            "left_elbow": 141.03978572513498,
+            "right_elbow": 148.73638741577108,
+            "left_shoulder": 102.41158965151484,
+            "right_shoulder": 100.19344723592818,
+            "left_knee": 121.25277470841789,
+            "right_knee": 114.34200537576274
+        }
+    },
+    {
+        "frame": 67,
+        "angles": {
+            "left_elbow": 143.29770948195772,
+            "right_elbow": 150.6737021592984,
+            "left_shoulder": 95.08412590872793,
+            "right_shoulder": 92.04462162350332,
+            "left_knee": 125.25494791228401,
+            "right_knee": 113.96510009056267
+        }
+    },
+    {
+        "frame": 68,
+        "angles": {
+            "left_elbow": 138.98686194182912,
+            "right_elbow": 147.70074282109124,
+            "left_shoulder": 100.084924559482,
+            "right_shoulder": 98.9238117460529,
+            "left_knee": 123.59439044390119,
+            "right_knee": 115.91756893579239
+        }
+    },
+    {
+        "frame": 69,
+        "angles": {
+            "left_elbow": 141.70544825342756,
+            "right_elbow": 150.25181645334726,
+            "left_shoulder": 92.98267705599258,
+            "right_shoulder": 93.01318434424155,
+            "left_knee": 123.1866385589625,
+            "right_knee": 112.19129917827492
+        }
+    },
+    {
+        "frame": 70,
+        "angles": {
+            "left_elbow": 144.21342033123756,
+            "right_elbow": 151.18075932496555,
+            "left_shoulder": 93.88877381420336,
+            "right_shoulder": 91.85015217252574,
+            "left_knee": 122.78623151520867,
+            "right_knee": 115.33842554217301
+        }
+    },
+    {
+        "frame": 71,
+        "angles": {
+            "left_elbow": 141.90535893059666,
+            "right_elbow": 151.81458927283518,
+            "left_shoulder": 95.72785191705943,
+            "right_shoulder": 95.2541767320822,
+            "left_knee": 123.29465566778224,
+            "right_knee": 114.7233775954606
+        }
+    },
+    {
+        "frame": 72,
+        "angles": {
+            "left_elbow": 143.3372758460456,
+            "right_elbow": 151.32232804456837,
+            "left_shoulder": 96.26908546319758,
+            "right_shoulder": 96.11959870299951,
+            "left_knee": 128.94329845951233,
+            "right_knee": 119.69424322242992
+        }
+    },
+    {
+        "frame": 73,
+        "angles": {
+            "left_elbow": 141.49971922137024,
+            "right_elbow": 150.23477783785683,
+            "left_shoulder": 98.12562378417736,
+            "right_shoulder": 99.33877758790896,
+            "left_knee": 127.11870205086161,
+            "right_knee": 120.00868033299714
+        }
+    },
+    {
+        "frame": 74,
+        "angles": {
+            "left_elbow": 142.00751769555845,
+            "right_elbow": 149.228108118121,
+            "left_shoulder": 92.44695959072702,
+            "right_shoulder": 93.59018580535457,
+            "left_knee": 128.32786090558062,
+            "right_knee": 118.08701614918236
+        }
+    },
+    {
+        "frame": 75,
+        "angles": {
+            "left_elbow": 141.73407194985452,
+            "right_elbow": 148.78332831017582,
+            "left_shoulder": 96.40196882951619,
+            "right_shoulder": 96.83525132193337,
+            "left_knee": 127.52135321962955,
+            "right_knee": 118.66973679310424
+        }
+    },
+    {
+        "frame": 76,
+        "angles": {
+            "left_elbow": 142.92666683635105,
+            "right_elbow": 149.1268815538327,
+            "left_shoulder": 94.51656527861141,
+            "right_shoulder": 94.31265114147672,
+            "left_knee": 127.02065669271569,
+            "right_knee": 118.68591615738812
+        }
+    },
+    {
+        "frame": 77,
+        "angles": {
+            "left_elbow": 144.24566891282976,
+            "right_elbow": 149.2918026082041,
+            "left_shoulder": 93.82063713334401,
+            "right_shoulder": 93.082601172385,
+            "left_knee": 126.32584771111301,
+            "right_knee": 119.88280961453437
+        }
+    },
+    {
+        "frame": 78,
+        "angles": {
+            "left_elbow": 142.11644832161463,
+            "right_elbow": 145.26032877939133,
+            "left_shoulder": 99.92007717341573,
+            "right_shoulder": 98.19316664902048,
+            "left_knee": 123.653426601088,
+            "right_knee": 117.00274795487312
+        }
+    },
+    {
+        "frame": 79,
+        "angles": {
+            "left_elbow": 148.60097351258048,
+            "right_elbow": 151.7290546456529,
+            "left_shoulder": 89.06827663071533,
+            "right_shoulder": 85.94074558195787,
+            "left_knee": 124.0551520768345,
+            "right_knee": 113.45911730385217
+        }
+    },
+    {
+        "frame": 80,
+        "angles": {
+            "left_elbow": 144.76604204350284,
+            "right_elbow": 149.83987213381621,
+            "left_shoulder": 91.5338239087782,
+            "right_shoulder": 89.71137434176715,
+            "left_knee": 124.7089863652195,
+            "right_knee": 112.5972099841591
+        }
+    },
+    {
+        "frame": 81,
+        "angles": {
+            "left_elbow": 144.86471472175094,
+            "right_elbow": 151.6335448482141,
+            "left_shoulder": 89.0974159509733,
+            "right_shoulder": 87.5923690053511,
+            "left_knee": 127.2952003653541,
+            "right_knee": 112.38627844237213
+        }
+    },
+    {
+        "frame": 82,
+        "angles": {
+            "left_elbow": 140.15213240312045,
+            "right_elbow": 146.64066518117514,
+            "left_shoulder": 100.91649778202975,
+            "right_shoulder": 100.43472046868254,
+            "left_knee": 121.8062531406095,
+            "right_knee": 112.22780398560688
+        }
+    },
+    {
+        "frame": 83,
+        "angles": {
+            "left_elbow": 139.40727898293053,
+            "right_elbow": 143.73036697690603,
+            "left_shoulder": 103.52188442127641,
+            "right_shoulder": 103.28148149528235,
+            "left_knee": 118.6987483240954,
+            "right_knee": 112.22148723124843
+        }
+    },
+    {
+        "frame": 84,
+        "angles": {
+            "left_elbow": 143.37517428395446,
+            "right_elbow": 148.2748072328288,
+            "left_shoulder": 98.42568483683718,
+            "right_shoulder": 99.13573299272707,
+            "left_knee": 125.28243072665683,
+            "right_knee": 116.81279949444365
+        }
+    },
+    {
+        "frame": 85,
+        "angles": {
+            "left_elbow": 139.94013190890553,
+            "right_elbow": 149.16034717257943,
+            "left_shoulder": 100.36540959714503,
+            "right_shoulder": 101.60294842269728,
+            "left_knee": 126.11747467846033,
+            "right_knee": 110.01545599086346
+        }
+    },
+    {
+        "frame": 86,
+        "angles": {
+            "left_elbow": 148.89989347162384,
+            "right_elbow": 155.4611428221043,
+            "left_shoulder": 95.38266291441698,
+            "right_shoulder": 93.90240277392405,
+            "left_knee": 123.27070546381928,
+            "right_knee": 111.5777405395445
+        }
+    },
+    {
+        "frame": 87,
+        "angles": {
+            "left_elbow": 145.8689057562125,
+            "right_elbow": 150.07035026598228,
+            "left_shoulder": 96.074972849131,
+            "right_shoulder": 99.27943371701303,
+            "left_knee": 123.50799133114833,
+            "right_knee": 114.60818647926313
+        }
+    },
+    {
+        "frame": 88,
+        "angles": {
+            "left_elbow": 154.27594197068933,
+            "right_elbow": 153.42822487256674,
+            "left_shoulder": 92.36746865991643,
+            "right_shoulder": 93.72629963875266,
+            "left_knee": 116.0076777757266,
+            "right_knee": 109.8363940602345
+        }
+    },
+    {
+        "frame": 89,
+        "angles": {
+            "left_elbow": 165.85219358566468,
+            "right_elbow": 161.7867222081238,
+            "left_shoulder": 72.80782867730817,
+            "right_shoulder": 74.48306352578876,
+            "left_knee": 116.56074656226097,
+            "right_knee": 109.25925836867556
+        }
+    },
+    {
+        "frame": 90,
+        "angles": {
+            "left_elbow": 169.70794092771447,
+            "right_elbow": 167.13651402046406,
+            "left_shoulder": 63.526680114246766,
+            "right_shoulder": 63.6077603137744,
+            "left_knee": 122.9008150207599,
+            "right_knee": 113.81205110308944
+        }
+    },
+    {
+        "frame": 91,
+        "angles": {
+            "left_elbow": 173.36143975656435,
+            "right_elbow": 169.7089913145301,
+            "left_shoulder": 57.4551007100594,
+            "right_shoulder": 57.028043356389205,
+            "left_knee": 124.74312719640116,
+            "right_knee": 114.67523976655785
+        }
+    },
+    {
+        "frame": 92,
+        "angles": {
+            "left_elbow": 176.37942583146415,
+            "right_elbow": 172.7825116821361,
+            "left_shoulder": 61.086961431315565,
+            "right_shoulder": 56.54184998375283,
+            "left_knee": 113.22024354850782,
+            "right_knee": 105.12879145411534
+        }
+    },
+    {
+        "frame": 93,
+        "angles": {
+            "left_elbow": 178.7980722601676,
+            "right_elbow": 178.4966133514457,
+            "left_shoulder": 85.69434972217734,
+            "right_shoulder": 67.99426443886384,
+            "left_knee": 105.99745563223279,
+            "right_knee": 103.46118509137256
+        }
+    },
+    {
+        "frame": 94,
+        "angles": {
+            "left_elbow": 179.17184544801572,
+            "right_elbow": 177.9666091466347,
+            "left_shoulder": 104.64915324228379,
+            "right_shoulder": 96.95236560320987,
+            "left_knee": 104.67064131361956,
+            "right_knee": 105.20142389419455
+        }
+    },
+    {
+        "frame": 95,
+        "angles": {
+            "left_elbow": 179.67573193096308,
+            "right_elbow": 176.92610572646777,
+            "left_shoulder": 109.06590802618351,
+            "right_shoulder": 103.10221132806959,
+            "left_knee": 108.56428683585686,
+            "right_knee": 104.97386576518721
+        }
+    },
+    {
+        "frame": 96,
+        "angles": {
+            "left_elbow": 179.3566945965013,
+            "right_elbow": 176.96826624086464,
+            "left_shoulder": 109.59898957030353,
+            "right_shoulder": 103.42409196695156,
+            "left_knee": 106.6829436086367,
+            "right_knee": 102.1892891944842
+        }
+    },
+    {
+        "frame": 97,
+        "angles": {
+            "left_elbow": 178.6408079396321,
+            "right_elbow": 176.92860510848013,
+            "left_shoulder": 109.26615881843225,
+            "right_shoulder": 104.48633077653083,
+            "left_knee": 110.8702995805174,
+            "right_knee": 103.51439680541093
+        }
+    },
+    {
+        "frame": 98,
+        "angles": {
+            "left_elbow": 178.4054605884774,
+            "right_elbow": 176.0191550015134,
+            "left_shoulder": 97.31229300757556,
+            "right_shoulder": 98.88312492344946,
+            "left_knee": 110.53559408116055,
+            "right_knee": 103.0344304367918
+        }
+    },
+    {
+        "frame": 99,
+        "angles": {
+            "left_elbow": 178.3394852008429,
+            "right_elbow": 175.38880821867278,
+            "left_shoulder": 92.13078688220575,
+            "right_shoulder": 93.64440231116079,
+            "left_knee": 112.00839945540402,
+            "right_knee": 106.75752952146124
+        }
+    },
+    {
+        "frame": 100,
+        "angles": {
+            "left_elbow": 178.01586289145473,
+            "right_elbow": 175.56705968331812,
+            "left_shoulder": 93.1040523413975,
+            "right_shoulder": 92.67086942055526,
+            "left_knee": 114.96792372711523,
+            "right_knee": 106.1992101060802
+        }
+    },
+    {
+        "frame": 101,
+        "angles": {
+            "left_elbow": 177.38631042027583,
+            "right_elbow": 175.83110384512003,
+            "left_shoulder": 88.91707763076981,
+            "right_shoulder": 88.10657081088763,
+            "left_knee": 106.88160079612251,
+            "right_knee": 104.60373259874319
+        }
+    },
+    {
+        "frame": 102,
+        "angles": {
+            "left_elbow": 177.39937480786074,
+            "right_elbow": 176.14268278173807,
+            "left_shoulder": 95.64919955379935,
+            "right_shoulder": 91.58406594000466,
+            "left_knee": 107.6169183373112,
+            "right_knee": 102.91588453673634
+        }
+    },
+    {
+        "frame": 103,
+        "angles": {
+            "left_elbow": 176.25213760716017,
+            "right_elbow": 174.97824141880764,
+            "left_shoulder": 81.3944471780058,
+            "right_shoulder": 76.74592607678072,
+            "left_knee": 110.01692112524768,
+            "right_knee": 105.03831607182144
+        }
+    },
+    {
+        "frame": 104,
+        "angles": {
+            "left_elbow": 174.87038502344683,
+            "right_elbow": 173.19065342747618,
+            "left_shoulder": 73.84818848913868,
+            "right_shoulder": 71.51176812896806,
+            "left_knee": 114.20296104091626,
+            "right_knee": 105.04323867768352
+        }
+    },
+    {
+        "frame": 105,
+        "angles": {
+            "left_elbow": 173.33373184878656,
+            "right_elbow": 172.28939956063607,
+            "left_shoulder": 73.39375784395193,
+            "right_shoulder": 70.71844458112804,
+            "left_knee": 110.14535743543306,
+            "right_knee": 102.8046793069553
+        }
+    },
+    {
+        "frame": 106,
+        "angles": {
+            "left_elbow": 171.24475384763798,
+            "right_elbow": 170.92921987063897,
+            "left_shoulder": 70.76648071877634,
+            "right_shoulder": 66.26709056715667,
+            "left_knee": 122.65837362973522,
+            "right_knee": 106.62382755517443
+        }
+    },
+    {
+        "frame": 107,
+        "angles": {
+            "left_elbow": 173.88688938875148,
+            "right_elbow": 171.38643114876214,
+            "left_shoulder": 72.9822861348586,
+            "right_shoulder": 68.06469153618973,
+            "left_knee": 116.42503064804416,
+            "right_knee": 104.88540820363711
+        }
+    },
+    {
+        "frame": 108,
+        "angles": {
+            "left_elbow": 172.2841087231374,
+            "right_elbow": 170.94409559682515,
+            "left_shoulder": 69.56258745585541,
+            "right_shoulder": 66.55358840193722,
+            "left_knee": 123.72277257533091,
+            "right_knee": 109.01496339765748
+        }
+    },
+    {
+        "frame": 109,
+        "angles": {
+            "left_elbow": 172.6958438978417,
+            "right_elbow": 170.50338292187703,
+            "left_shoulder": 72.08653603731477,
+            "right_shoulder": 67.60642062839476,
+            "left_knee": 119.82405611542848,
+            "right_knee": 106.96929372766594
+        }
+    },
+    {
+        "frame": 110,
+        "angles": {
+            "left_elbow": 171.48869359621236,
+            "right_elbow": 170.56774150658782,
+            "left_shoulder": 70.11293355493781,
+            "right_shoulder": 65.07416324664624,
+            "left_knee": 118.15210211237232,
+            "right_knee": 103.8631444369017
+        }
+    },
+    {
+        "frame": 111,
+        "angles": {
+            "left_elbow": 171.2006130287922,
+            "right_elbow": 170.5158786628472,
+            "left_shoulder": 69.5556343972703,
+            "right_shoulder": 65.50402268768683,
+            "left_knee": 117.40496911152934,
+            "right_knee": 105.67422688807802
+        }
+    },
+    {
+        "frame": 112,
+        "angles": {
+            "left_elbow": 170.19647599293236,
+            "right_elbow": 170.03515567513847,
+            "left_shoulder": 70.52368909318074,
+            "right_shoulder": 66.28951353861284,
+            "left_knee": 119.375515020464,
+            "right_knee": 104.55503899415952
+        }
+    },
+    {
+        "frame": 113,
+        "angles": {
+            "left_elbow": 169.9759417061484,
+            "right_elbow": 170.11437575681458,
+            "left_shoulder": 76.6725303571132,
+            "right_shoulder": 70.47503693325899,
+            "left_knee": 116.92853219634851,
+            "right_knee": 102.52570309354505
+        }
+    },
+    {
+        "frame": 114,
+        "angles": {
+            "left_elbow": 170.59668984811879,
+            "right_elbow": 170.23695511053606,
+            "left_shoulder": 75.32962482789641,
+            "right_shoulder": 69.02895369864137,
+            "left_knee": 115.51378480721681,
+            "right_knee": 101.42966688521221
+        }
+    },
+    {
+        "frame": 115,
+        "angles": {
+            "left_elbow": 170.8817294192145,
+            "right_elbow": 169.5965499911704,
+            "left_shoulder": 76.04155114610546,
+            "right_shoulder": 68.56347571313553,
+            "left_knee": 114.85054424164669,
+            "right_knee": 101.15236026605459
+        }
+    },
+    {
+        "frame": 116,
+        "angles": {
+            "left_elbow": 170.78776017606788,
+            "right_elbow": 170.0284652846491,
+            "left_shoulder": 77.6122944634456,
+            "right_shoulder": 71.43492268402204,
+            "left_knee": 113.52993646863756,
+            "right_knee": 100.80718232273732
+        }
+    },
+    {
+        "frame": 117,
+        "angles": {
+            "left_elbow": 171.83306101402792,
+            "right_elbow": 168.90019519130448,
+            "left_shoulder": 72.15748255692736,
+            "right_shoulder": 67.07781022123606,
+            "left_knee": 120.01400938188173,
+            "right_knee": 106.29839136513023
+        }
+    },
+    {
+        "frame": 118,
+        "angles": {
+            "left_elbow": 171.2391155030922,
+            "right_elbow": 170.09246707198184,
+            "left_shoulder": 72.72230368651233,
+            "right_shoulder": 66.78095006082417,
+            "left_knee": 114.89089831647442,
+            "right_knee": 102.34620171015591
+        }
+    },
+    {
+        "frame": 119,
+        "angles": {
+            "left_elbow": 173.96799302465067,
+            "right_elbow": 171.8146486089499,
+            "left_shoulder": 72.62687464631203,
+            "right_shoulder": 70.13328817882307,
+            "left_knee": 111.39668493902683,
+            "right_knee": 97.62812799672064
+        }
+    },
+    {
+        "frame": 120,
+        "angles": {
+            "left_elbow": 174.14921021936286,
+            "right_elbow": 171.8608555930341,
+            "left_shoulder": 73.49860364893723,
+            "right_shoulder": 71.58788774405787,
+            "left_knee": 110.5609614040468,
+            "right_knee": 97.65195797721248
+        }
+    },
+    {
+        "frame": 121,
+        "angles": {
+            "left_elbow": 175.98592181157213,
+            "right_elbow": 175.07967796665696,
+            "left_shoulder": 90.3581681110266,
+            "right_shoulder": 87.38769499502378,
+            "left_knee": 110.22691708321693,
+            "right_knee": 104.0396823950735
+        }
+    },
+    {
+        "frame": 122,
+        "angles": {
+            "left_elbow": 178.26551483298505,
+            "right_elbow": 177.13483929421284,
+            "left_shoulder": 111.88970318145546,
+            "right_shoulder": 110.86341272916576,
+            "left_knee": 108.82379396111551,
+            "right_knee": 102.03990000422982
+        }
+    },
+    {
+        "frame": 123,
+        "angles": {
+            "left_elbow": 178.20331689259882,
+            "right_elbow": 177.14781801335613,
+            "left_shoulder": 111.51784414293584,
+            "right_shoulder": 110.52411718118667,
+            "left_knee": 108.53105932421619,
+            "right_knee": 102.00370670833925
+        }
+    },
+    {
+        "frame": 124,
+        "angles": {
+            "left_elbow": 178.43981154629265,
+            "right_elbow": 176.967999227235,
+            "left_shoulder": 110.17586918492849,
+            "right_shoulder": 109.66961477264738,
+            "left_knee": 104.49326539300506,
+            "right_knee": 102.85572871075875
+        }
+    },
+    {
+        "frame": 125,
+        "angles": {
+            "left_elbow": 177.90337813348535,
+            "right_elbow": 177.72678432665458,
+            "left_shoulder": 115.90786354552435,
+            "right_shoulder": 105.89935777084223,
+            "left_knee": 110.13661874461341,
+            "right_knee": 107.11184535481007
+        }
+    },
+    {
+        "frame": 126,
+        "angles": {
+            "left_elbow": 177.894887671971,
+            "right_elbow": 177.89258687842985,
+            "left_shoulder": 117.48937606181741,
+            "right_shoulder": 107.54097482839046,
+            "left_knee": 111.104008131782,
+            "right_knee": 106.99409760361648
+        }
+    },
+    {
+        "frame": 127,
+        "angles": {
+            "left_elbow": 178.2626864222409,
+            "right_elbow": 178.2927904323535,
+            "left_shoulder": 105.08075898223838,
+            "right_shoulder": 93.75282879910952,
+            "left_knee": 109.32480104810499,
+            "right_knee": 106.21371330887794
+        }
+    },
+    {
+        "frame": 128,
+        "angles": {
+            "left_elbow": 171.23709428340976,
+            "right_elbow": 169.32613288930946,
+            "left_shoulder": 65.84759375114042,
+            "right_shoulder": 64.96257761477544,
+            "left_knee": 116.9814136437053,
+            "right_knee": 108.63697271101796
+        }
+    },
+    {
+        "frame": 129,
+        "angles": {
+            "left_elbow": 171.2766470212768,
+            "right_elbow": 170.06596071103345,
+            "left_shoulder": 65.18515626637883,
+            "right_shoulder": 64.16423721216486,
+            "left_knee": 119.10809407386502,
+            "right_knee": 111.09786799679141
+        }
+    },
+    {
+        "frame": 130,
+        "angles": {
+            "left_elbow": 160.0657477641538,
+            "right_elbow": 158.28975440497024,
+            "left_shoulder": 80.66394973847012,
+            "right_shoulder": 79.5179333439561,
+            "left_knee": 123.34650035679998,
+            "right_knee": 116.80586752225311
+        }
+    },
+    {
+        "frame": 131,
+        "angles": {
+            "left_elbow": 158.23323388752058,
+            "right_elbow": 156.7933680062268,
+            "left_shoulder": 84.44850574469737,
+            "right_shoulder": 82.72141382242165,
+            "left_knee": 123.67686548271898,
+            "right_knee": 117.40260827284672
+        }
+    },
+    {
+        "frame": 132,
+        "angles": {
+            "left_elbow": 119.03816869509957,
+            "right_elbow": 137.4319381305053,
+            "left_shoulder": 94.70363698156882,
+            "right_shoulder": 103.76761609538373,
+            "left_knee": 124.76724295338461,
+            "right_knee": 118.3990563328175
+        }
+    },
+    {
+        "frame": 133,
+        "angles": {
+            "left_elbow": 112.93330247321379,
+            "right_elbow": 135.7821658825081,
+            "left_shoulder": 89.61400139526668,
+            "right_shoulder": 103.17775334475968,
+            "left_knee": 124.57995226010163,
+            "right_knee": 115.67120238631516
+        }
+    },
+    {
+        "frame": 134,
+        "angles": {
+            "left_elbow": 112.85968823694121,
+            "right_elbow": 136.2589123108457,
+            "left_shoulder": 89.61112211576797,
+            "right_shoulder": 103.46277215257305,
+            "left_knee": 123.73580104600104,
+            "right_knee": 114.96401647593075
+        }
+    },
+    {
+        "frame": 135,
+        "angles": {
+            "left_elbow": 115.25681397892568,
+            "right_elbow": 138.45766873112476,
+            "left_shoulder": 92.12522187137847,
+            "right_shoulder": 104.50302152104823,
+            "left_knee": 125.92575962385763,
+            "right_knee": 115.51015215049208
+        }
+    },
+    {
+        "frame": 136,
+        "angles": {
+            "left_elbow": 114.47742970114774,
+            "right_elbow": 137.18680063567294,
+            "left_shoulder": 93.17054676002199,
+            "right_shoulder": 103.89630895215258,
+            "left_knee": 123.82402974500212,
+            "right_knee": 113.69669127585333
+        }
+    },
+    {
+        "frame": 137,
+        "angles": {
+            "left_elbow": 115.33301209326517,
+            "right_elbow": 138.7530991904971,
+            "left_shoulder": 93.38681135648126,
+            "right_shoulder": 104.68039613967939,
+            "left_knee": 124.44466354516166,
+            "right_knee": 111.37694220685258
+        }
+    },
+    {
+        "frame": 138,
+        "angles": {
+            "left_elbow": 125.18622360928019,
+            "right_elbow": 141.9590352886706,
+            "left_shoulder": 103.62549400777768,
+            "right_shoulder": 106.96639199442379,
+            "left_knee": 127.47443875397084,
+            "right_knee": 116.91475614385352
+        }
+    },
+    {
+        "frame": 139,
+        "angles": {
+            "left_elbow": 129.17902062978052,
+            "right_elbow": 144.94787383475932,
+            "left_shoulder": 106.91036461677422,
+            "right_shoulder": 107.20507061508224,
+            "left_knee": 119.25323278086248,
+            "right_knee": 111.47005064782167
+        }
+    },
+    {
+        "frame": 140,
+        "angles": {
+            "left_elbow": 128.9767732830191,
+            "right_elbow": 145.15513332400664,
+            "left_shoulder": 106.85033384915772,
+            "right_shoulder": 107.50652861059335,
+            "left_knee": 119.36183245722451,
+            "right_knee": 110.85274136109628
+        }
+    },
+    {
+        "frame": 141,
+        "angles": {
+            "left_elbow": 128.83966632666431,
+            "right_elbow": 141.42888972661848,
+            "left_shoulder": 107.24583604327877,
+            "right_shoulder": 105.75400675906856,
+            "left_knee": 118.07237075355357,
+            "right_knee": 109.58182499941353
+        }
+    },
+    {
+        "frame": 142,
+        "angles": {
+            "left_elbow": 128.73198402758862,
+            "right_elbow": 142.6038599710977,
+            "left_shoulder": 106.92464884568308,
+            "right_shoulder": 106.2360169948183,
+            "left_knee": 118.47886935991838,
+            "right_knee": 109.07492718445697
+        }
+    },
+    {
+        "frame": 143,
+        "angles": {
+            "left_elbow": 136.8544197952242,
+            "right_elbow": 145.69076654286957,
+            "left_shoulder": 104.68284152501772,
+            "right_shoulder": 103.0528844862848,
+            "left_knee": 123.51308001522757,
+            "right_knee": 110.99037406249164
+        }
+    },
+    {
+        "frame": 144,
+        "angles": {
+            "left_elbow": 137.35129564758645,
+            "right_elbow": 145.73494375093523,
+            "left_shoulder": 101.31454478067644,
+            "right_shoulder": 98.31400472481077,
+            "left_knee": 121.91786839649295,
+            "right_knee": 109.39375149831271
+        }
+    },
+    {
+        "frame": 145,
+        "angles": {
+            "left_elbow": 135.37091629238114,
+            "right_elbow": 141.96401999303245,
+            "left_shoulder": 104.65926075202185,
+            "right_shoulder": 103.01627382345846,
+            "left_knee": 121.12036642647352,
+            "right_knee": 109.22155623108635
+        }
+    },
+    {
+        "frame": 146,
+        "angles": {
+            "left_elbow": 136.0959362224899,
+            "right_elbow": 145.83661706500922,
+            "left_shoulder": 105.67315678854635,
+            "right_shoulder": 104.29025699155545,
+            "left_knee": 121.04238246779909,
+            "right_knee": 110.80948016687562
+        }
+    },
+    {
+        "frame": 147,
+        "angles": {
+            "left_elbow": 133.5153822437443,
+            "right_elbow": 144.92493404221852,
+            "left_shoulder": 106.68196299241129,
+            "right_shoulder": 106.25018069053623,
+            "left_knee": 119.57226247627217,
+            "right_knee": 106.05750967496087
+        }
+    },
+    {
+        "frame": 148,
+        "angles": {
+            "left_elbow": 133.7225185100991,
+            "right_elbow": 144.6966593151232,
+            "left_shoulder": 107.39818856692132,
+            "right_shoulder": 106.14599265478367,
+            "left_knee": 121.42459342021924,
+            "right_knee": 107.93843899481666
+        }
+    },
+    {
+        "frame": 149,
+        "angles": {
+            "left_elbow": 137.0749523827216,
+            "right_elbow": 145.02089476289993,
+            "left_shoulder": 108.2992993330215,
+            "right_shoulder": 106.92521053432036,
+            "left_knee": 120.96738901894619,
+            "right_knee": 111.92882951421906
+        }
+    },
+    {
+        "frame": 150,
+        "angles": {
+            "left_elbow": 142.13548301561116,
+            "right_elbow": 147.01652579263447,
+            "left_shoulder": 101.08692270968425,
+            "right_shoulder": 100.0644839803724,
+            "left_knee": 121.2181769206811,
+            "right_knee": 108.93959812749809
+        }
+    },
+    {
+        "frame": 151,
+        "angles": {
+            "left_elbow": 134.4687587564158,
+            "right_elbow": 142.53673994643756,
+            "left_shoulder": 107.29722144511287,
+            "right_shoulder": 105.74537247606537,
+            "left_knee": 120.65236133240194,
+            "right_knee": 108.19412416004273
+        }
+    },
+    {
+        "frame": 152,
+        "angles": {
+            "left_elbow": 137.68787926011436,
+            "right_elbow": 143.64308418619552,
+            "left_shoulder": 106.4511820283923,
+            "right_shoulder": 103.65306827506105,
+            "left_knee": 118.61894003241004,
+            "right_knee": 110.86173637754656
+        }
+    },
+    {
+        "frame": 153,
+        "angles": {
+            "left_elbow": 134.2805140639191,
+            "right_elbow": 141.68538636391662,
+            "left_shoulder": 107.92520467708462,
+            "right_shoulder": 106.69000216064477,
+            "left_knee": 123.51746415993584,
+            "right_knee": 115.83603988578587
+        }
+    },
+    {
+        "frame": 154,
+        "angles": {
+            "left_elbow": 134.25612490712442,
+            "right_elbow": 143.34844456200057,
+            "left_shoulder": 108.38803203448452,
+            "right_shoulder": 106.63127854294153,
+            "left_knee": 121.9251147702864,
+            "right_knee": 112.60458404818556
+        }
+    },
+    {
+        "frame": 155,
+        "angles": {
+            "left_elbow": 135.2005496074783,
+            "right_elbow": 144.25620340912263,
+            "left_shoulder": 108.21133461815523,
+            "right_shoulder": 105.98579393830711,
+            "left_knee": 122.03582420217272,
+            "right_knee": 111.69743776381308
+        }
+    },
+    {
+        "frame": 156,
+        "angles": {
+            "left_elbow": 130.9536755727848,
+            "right_elbow": 140.81682237253125,
+            "left_shoulder": 106.69584301837635,
+            "right_shoulder": 105.18886470952359,
+            "left_knee": 120.10501679798499,
+            "right_knee": 110.99249735851075
+        }
+    },
+    {
+        "frame": 157,
+        "angles": {
+            "left_elbow": 126.43294166667708,
+            "right_elbow": 138.06778537423978,
+            "left_shoulder": 101.85320904133594,
+            "right_shoulder": 103.6437164833367,
+            "left_knee": 126.36328587839218,
+            "right_knee": 121.1502131608833
+        }
+    },
+    {
+        "frame": 158,
+        "angles": {
+            "left_elbow": 122.95370616459705,
+            "right_elbow": 134.55025663262572,
+            "left_shoulder": 97.12559668996155,
+            "right_shoulder": 99.56893549940659,
+            "left_knee": 124.15528670081879,
+            "right_knee": 123.12086884168636
+        }
+    },
+    {
+        "frame": 159,
+        "angles": {
+            "left_elbow": 120.16147771623251,
+            "right_elbow": 130.36936379272763,
+            "left_shoulder": 91.42836098053387,
+            "right_shoulder": 95.06385427190055,
+            "left_knee": 105.96455279593887,
+            "right_knee": 116.87246814822781
+        }
+    },
+    {
+        "frame": 160,
+        "angles": {
+            "left_elbow": 110.18318175008768,
+            "right_elbow": 122.8314994837947,
+            "left_shoulder": 81.55240101515456,
+            "right_shoulder": 88.06449955047162,
+            "left_knee": 117.83074534890414,
+            "right_knee": 116.77755979778006
+        }
+    },
+    {
+        "frame": 161,
+        "angles": {
+            "left_elbow": 106.23676489317285,
+            "right_elbow": 121.7821402789449,
+            "left_shoulder": 74.9712406029381,
+            "right_shoulder": 82.6087528491094,
+            "left_knee": 118.86396099332778,
+            "right_knee": 116.37013967823268
+        }
+    },
+    {
+        "frame": 162,
+        "angles": {
+            "left_elbow": 103.90007050395039,
+            "right_elbow": 118.01356770016626,
+            "left_shoulder": 67.63159915230939,
+            "right_shoulder": 76.46339220758739,
+            "left_knee": 121.83233396608178,
+            "right_knee": 115.64141308498668
+        }
+    },
+    {
+        "frame": 163,
+        "angles": {
+            "left_elbow": 100.94104873893038,
+            "right_elbow": 115.31366390173588,
+            "left_shoulder": 61.91103534459838,
+            "right_shoulder": 72.05440402537643,
+            "left_knee": 119.04660879301248,
+            "right_knee": 110.15694793763575
+        }
+    },
+    {
+        "frame": 164,
+        "angles": {
+            "left_elbow": 105.69906569365448,
+            "right_elbow": 112.975618052621,
+            "left_shoulder": 58.693709212526365,
+            "right_shoulder": 66.00880187143261,
+            "left_knee": 118.55660583715745,
+            "right_knee": 108.87746885252828
+        }
+    },
+    {
+        "frame": 165,
+        "angles": {
+            "left_elbow": 98.47095726587195,
+            "right_elbow": 107.77399146857036,
+            "left_shoulder": 50.179259031020884,
+            "right_shoulder": 55.926758415863794,
+            "left_knee": 109.83545236146414,
+            "right_knee": 100.00730376281922
+        }
+    },
+    {
+        "frame": 166,
+        "angles": {
+            "left_elbow": 102.96152273532972,
+            "right_elbow": 106.0559039742519,
+            "left_shoulder": 44.072157630041474,
+            "right_shoulder": 49.348688689270574,
+            "left_knee": 109.9223514804356,
+            "right_knee": 101.77448299576696
+        }
+    },
+    {
+        "frame": 167,
+        "angles": {
+            "left_elbow": 91.72558472932435,
+            "right_elbow": 99.59814438744318,
+            "left_shoulder": 35.03811350003836,
+            "right_shoulder": 43.13458708280208,
+            "left_knee": 116.55764367803229,
+            "right_knee": 109.68252453162381
+        }
+    },
+    {
+        "frame": 168,
+        "angles": {
+            "left_elbow": 92.25749803658071,
+            "right_elbow": 99.89995928991027,
+            "left_shoulder": 28.999503459207357,
+            "right_shoulder": 40.500511671753486,
+            "left_knee": 117.23871154156491,
+            "right_knee": 108.01350484810051
+        }
+    },
+    {
+        "frame": 169,
+        "angles": {
+            "left_elbow": 89.91607713861364,
+            "right_elbow": 95.86099340777135,
+            "left_shoulder": 24.776274683500795,
+            "right_shoulder": 31.897175183028207,
+            "left_knee": 114.19567483601598,
+            "right_knee": 110.14160567900589
+        }
+    },
+    {
+        "frame": 170,
+        "angles": {
+            "left_elbow": 92.32540971186515,
+            "right_elbow": 100.29721832254482,
+            "left_shoulder": 24.43378180514075,
+            "right_shoulder": 26.52120377390579,
+            "left_knee": 119.8877564509688,
+            "right_knee": 108.20937922309419
+        }
+    },
+    {
+        "frame": 171,
+        "angles": {
+            "left_elbow": 85.43420508572834,
+            "right_elbow": 94.76152366247061,
+            "left_shoulder": 18.633062945422434,
+            "right_shoulder": 29.167781286177547,
+            "left_knee": 120.60480529160945,
+            "right_knee": 108.39034824306637
+        }
+    },
+    {
+        "frame": 172,
+        "angles": {
+            "left_elbow": 90.10987339378987,
+            "right_elbow": 96.12292167263557,
+            "left_shoulder": 15.542428282158832,
+            "right_shoulder": 23.632712699179073,
+            "left_knee": 122.04455261477906,
+            "right_knee": 109.03111707414148
+        }
+    },
+    {
+        "frame": 173,
+        "angles": {
+            "left_elbow": 91.64709465632501,
+            "right_elbow": 101.31212002783461,
+            "left_shoulder": 15.053599389522367,
+            "right_shoulder": 22.452467294852894,
+            "left_knee": 117.80261596090975,
+            "right_knee": 107.91884928083495
+        }
+    },
+    {
+        "frame": 174,
+        "angles": {
+            "left_elbow": 92.79618300355716,
+            "right_elbow": 109.54312201251868,
+            "left_shoulder": 15.905081500736642,
+            "right_shoulder": 23.76496414306291,
+            "left_knee": 115.60074299385107,
+            "right_knee": 108.21472045063048
+        }
+    },
+    {
+        "frame": 175,
+        "angles": {
+            "left_elbow": 93.50239258446672,
+            "right_elbow": 115.60967393932204,
+            "left_shoulder": 16.219317553773696,
+            "right_shoulder": 27.693823508748032,
+            "left_knee": 115.20057787306587,
+            "right_knee": 109.37460423860072
+        }
+    },
+    {
+        "frame": 176,
+        "angles": {
+            "left_elbow": 93.68411655462099,
+            "right_elbow": 112.24533528407761,
+            "left_shoulder": 17.206758458211333,
+            "right_shoulder": 23.55016029887324,
+            "left_knee": 115.98617811578367,
+            "right_knee": 108.47165520665182
+        }
+    },
+    {
+        "frame": 177,
+        "angles": {
+            "left_elbow": 94.0993770384043,
+            "right_elbow": 115.50952396553866,
+            "left_shoulder": 19.528363163537254,
+            "right_shoulder": 23.698045078424695,
+            "left_knee": 118.76165417082079,
+            "right_knee": 111.95169155892586
+        }
+    },
+    {
+        "frame": 178,
+        "angles": {
+            "left_elbow": 92.91235212795281,
+            "right_elbow": 114.31472979595715,
+            "left_shoulder": 16.75418746159216,
+            "right_shoulder": 27.341444179822762,
+            "left_knee": 116.80561902120381,
+            "right_knee": 112.97472819253998
+        }
+    },
+    {
+        "frame": 179,
+        "angles": {
+            "left_elbow": 93.95556378872928,
+            "right_elbow": 115.03352605537175,
+            "left_shoulder": 15.449597308775509,
+            "right_shoulder": 27.28486767426399,
+            "left_knee": 114.53427599883143,
+            "right_knee": 107.67450727346672
+        }
+    },
+    {
+        "frame": 180,
+        "angles": {
+            "left_elbow": 95.34440449757531,
+            "right_elbow": 121.33486245221305,
+            "left_shoulder": 22.68386906198689,
+            "right_shoulder": 25.68069644888731,
+            "left_knee": 114.23959632780941,
+            "right_knee": 109.0362872457063
+        }
+    },
+    {
+        "frame": 181,
+        "angles": {
+            "left_elbow": 94.77275251138627,
+            "right_elbow": 120.36606253077798,
+            "left_shoulder": 22.28684182928307,
+            "right_shoulder": 23.258297401724143,
+            "left_knee": 115.48269775752293,
+            "right_knee": 108.96274965039274
+        }
+    }
+]
