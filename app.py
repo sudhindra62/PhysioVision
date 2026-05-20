@@ -70,22 +70,10 @@ class PhysioProcessor(VideoProcessorBase):
                 raw_angles = self.math_calc.get_standard_angles(joints)
                 clean_angles = {}
                 
-                # Z-Depth Detection for Sideways Exercises
-                left_hip_z = joints[23].z
-                right_hip_z = joints[24].z
-                is_side_profile = abs(left_hip_z - right_hip_z) > 0.15 
-                closer_side = "left" if left_hip_z < right_hip_z else "right"
-
                 for j_name, angle in raw_angles.items():
                     if j_name in self.joint_dependencies:
-                        is_visible = all(joints[idx].visibility > 0.4 for idx in self.joint_dependencies[j_name])
-                        
-                        if is_side_profile:
-                            if closer_side == "left" and "right" in j_name:
-                                is_visible = False
-                            elif closer_side == "right" and "left" in j_name:
-                                is_visible = False
-
+                        # Stricter visibility filter: block garbage frames below 65% confidence
+                        is_visible = all(joints[idx].visibility > 0.65 for idx in self.joint_dependencies[j_name])
                         clean_angles[j_name] = angle if is_visible else None
                     else:
                         clean_angles[j_name] = angle
@@ -95,7 +83,7 @@ class PhysioProcessor(VideoProcessorBase):
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 # -------------------------------------------------------------------
-# 2. UI HELPERS
+# 2. UI HELPERS (DASHBOARD)
 # -------------------------------------------------------------------
 def load_master_registry():
     cache_path = ROOT_DIR / "data" / "master_registry.json"
@@ -113,7 +101,6 @@ def render_dashboard_view():
         st.info("No workout history found. Complete a session in the Live Tracker to see your data!")
         return
 
-    # Calculate Top-Level KPIs
     total_workouts = len(df)
     total_reps_ever = int(df['total_reps'].sum())
     overall_avg_score = df['average_score'].mean()
@@ -159,17 +146,17 @@ def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.radio("Go to:", ["Live Tracker", "Analytics Dashboard"])
 
-    # === PAGE 1: THE DASHBOARD ===
     if app_mode == "Analytics Dashboard":
         render_dashboard_view()
 
-    # === PAGE 2: THE LIVE TRACKER ===
     elif app_mode == "Live Tracker":
         st.title("PhysioVision Pro: ROM & Rep Tracking")
 
-        # Start a workout timer in session state
+        # Memory Backup for Database Saves
         if "workout_start" not in st.session_state:
             st.session_state.workout_start = datetime.now()
+        if "backup_metrics" not in st.session_state:
+            st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0}
 
         st.sidebar.header("Session Settings")
         display_to_key = {data["display_name"]: key for key, data in registry.items()}
@@ -188,15 +175,14 @@ def main():
             "min_angle": joint_limits["min_angle"],
             "max_angle": joint_limits["max_angle"],
             "tolerance": physics["tolerance"],
-            "all_joints": physics["all_joints"] 
+            "all_joints": physics["all_joints"],
+            "golden_trajectory": physics.get("golden_trajectory", [])
         }
 
         with st.sidebar:
             st.success("Precomputed Registry Loaded ⚡")
             st.markdown("### AI Elected Mover:")
             st.info(f"🦾 **{primary_joint.replace('_', ' ').title()}**")
-            st.write(f"**Target Peak:** `{judge_config['max_angle']:.1f}°`")
-            st.write(f"**Target Rest:** `{judge_config['min_angle']:.1f}°`")
 
         col1, col2, col3 = st.columns([1.5, 1.5, 1])
 
@@ -226,15 +212,15 @@ def main():
                 if not webrtc_ctx.video_processor.judge:
                     webrtc_ctx.video_processor.judge = ROMJudge(judge_config)
                 
-                # Update UI continuously while camera is running
                 while webrtc_ctx.state.playing:
                     metrics = webrtc_ctx.video_processor.metrics
                     
+                    st.session_state.backup_metrics = metrics
+                    
                     score_color = "green" if metrics["avg_score"] > 80 else "orange" if metrics["avg_score"] > 40 else "red"
-                    state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING"] else "green" if metrics["state"] == "PEAK_REACHED" else "gray"
+                    state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING"] else "green" if metrics["state"] == "RESTING" else "gray"
 
                     rep_ui.markdown(f"<h1 style='text-align: center; font-size: 60px;'>Reps: {metrics['reps']}</h1>", unsafe_allow_html=True)
-                    
                     score_ui.markdown(f"""
                         <div style='text-align: center;'>
                             <h3 style='margin-bottom: 0;'>Session Average</h3>
@@ -242,16 +228,14 @@ def main():
                             <p style='color: gray; font-size: 20px;'>Last Rep: {metrics['last_score']}% | Motion: {metrics['progress']}%</p>
                         </div>
                     """, unsafe_allow_html=True)
-                    
                     state_ui.markdown(f"<h3 style='text-align: center; color: {state_color};'>{metrics['state']}</h3>", unsafe_allow_html=True)
-                    
                     time.sleep(0.05) 
                     
-            # --- THE SAVE BUTTON ---
             st.markdown("---")
             if st.button("💾 Finish & Save Workout", use_container_width=True, type="primary"):
-                if webrtc_ctx.video_processor and webrtc_ctx.video_processor.metrics["reps"] > 0:
-                    final_metrics = webrtc_ctx.video_processor.metrics
+                final_metrics = st.session_state.backup_metrics
+                
+                if final_metrics["reps"] > 0:
                     duration = int((datetime.now() - st.session_state.workout_start).total_seconds())
                     
                     success = save_workout(
@@ -263,8 +247,9 @@ def main():
                     )
                     
                     if success:
-                        st.success("Workout safely logged to database!")
+                        st.success(f"Successfully saved {final_metrics['reps']} reps to the database!")
                         st.session_state.workout_start = datetime.now()
+                        st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0}
                 else:
                     st.warning("Complete at least 1 full rep before saving!")
 
