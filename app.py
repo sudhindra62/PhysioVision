@@ -36,7 +36,8 @@ class PhysioProcessor(VideoProcessorBase):
         self.math_calc = PhysioGeometry()
         
         self.judge = None
-        self.joint_name = None
+        # Changed to support multiple active joints
+        self.joint_names = []
         
         self.metrics = {"reps": 0, "state": "INITIALIZING", "progress": 0.0, "last_score": 0.0, "avg_score": 0.0}
 
@@ -66,7 +67,8 @@ class PhysioProcessor(VideoProcessorBase):
         if joints:
             self.draw_skeleton(img, joints)
             
-            if self.judge and self.joint_name:
+            # Using the new joint_names list
+            if self.judge and self.joint_names:
                 raw_angles = self.math_calc.get_standard_angles(joints)
                 clean_angles = {}
                 
@@ -167,22 +169,23 @@ def main():
         video_path = VIDEOS_DIR / active_data["video_file"]
         physics = active_data["physics"]
         
-        primary_joint = physics["primary_joint"]
-        joint_limits = physics["all_joints"][primary_joint]
+        # --- NEW: Safely extract multiple joints ---
+        primary_joints = physics.get("primary_joints", ["Unknown"])
+        display_joint_text = ", ".join(primary_joints).replace("_", " ").title()
 
+        # The new ROMJudge reads max/min ranges directly from "all_joints", 
+        # so we no longer need to pass singular min_angle/max_angle here.
         judge_config = {
-            "primary_joint": primary_joint,
-            "min_angle": joint_limits["min_angle"],
-            "max_angle": joint_limits["max_angle"],
-            "tolerance": physics["tolerance"],
+            "primary_joints": primary_joints,
+            "tolerance": physics.get("tolerance", 15.0),
             "all_joints": physics["all_joints"],
             "golden_trajectory": physics.get("golden_trajectory", [])
         }
 
         with st.sidebar:
-            st.success("Precomputed Registry Loaded ⚡")
+            st.success("Precomputed Registry Loaded 🟢")
             st.markdown("### AI Elected Mover:")
-            st.info(f"🦾 **{primary_joint.replace('_', ' ').title()}**")
+            st.info(f"🦾 **{display_joint_text}**")
 
         col1, col2, col3 = st.columns([1.5, 1.5, 1])
 
@@ -207,7 +210,8 @@ def main():
             state_ui = st.empty()
             
             if webrtc_ctx.state.playing and webrtc_ctx.video_processor:
-                webrtc_ctx.video_processor.joint_name = primary_joint
+                # Pass the LIST of joints instead of a single string
+                webrtc_ctx.video_processor.joint_names = primary_joints
                 
                 if not webrtc_ctx.video_processor.judge:
                     webrtc_ctx.video_processor.judge = ROMJudge(judge_config)
@@ -218,7 +222,7 @@ def main():
                     st.session_state.backup_metrics = metrics
                     
                     score_color = "green" if metrics["avg_score"] > 80 else "orange" if metrics["avg_score"] > 40 else "red"
-                    state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING"] else "green" if metrics["state"] == "RESTING" else "gray"
+                    state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING_VALID", "LOWERING_INVALID"] else "green" if metrics["state"] == "RESTING" else "gray"
 
                     rep_ui.markdown(f"<h1 style='text-align: center; font-size: 60px;'>Reps: {metrics['reps']}</h1>", unsafe_allow_html=True)
                     score_ui.markdown(f"""
@@ -228,7 +232,7 @@ def main():
                             <p style='color: gray; font-size: 20px;'>Last Rep: {metrics['last_score']}% | Motion: {metrics['progress']}%</p>
                         </div>
                     """, unsafe_allow_html=True)
-                    state_ui.markdown(f"<h3 style='text-align: center; color: {state_color};'>{metrics['state']}</h3>", unsafe_allow_html=True)
+                    state_ui.markdown(f"<h3 style='text-align: center; color: {state_color};'>{metrics['state'].replace('_', ' ')}</h3>", unsafe_allow_html=True)
                     time.sleep(0.05) 
                     
             st.markdown("---")
@@ -240,7 +244,7 @@ def main():
                     
                     success = save_workout(
                         exercise_name=active_data["display_name"],
-                        target_joint=primary_joint,
+                        target_joint=display_joint_text, # Saves BOTH joints to the DB
                         reps=final_metrics["reps"],
                         avg_score=final_metrics["avg_score"],
                         duration=duration

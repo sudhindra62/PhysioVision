@@ -85,7 +85,8 @@ def main():
                 "meta": meta_info,
                 "physics": physics_config
             }
-            print(f"✅ Success! Elected Joint: {physics_config['primary_joint']} | Trajectory Frames: {len(golden_seq)}")
+            # The fixed print statement to handle the list
+            print(f"✅ Success! Elected Joints: {physics_config.get('primary_joints')} | Trajectory Frames: {len(golden_seq)}")
         else:
             print(f"❌ AI Failed to extract motion from {video_id}")
 

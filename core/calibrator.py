@@ -26,8 +26,6 @@ class AutoCalibrator:
             if joints:
                 angles = self.math_calc.get_standard_angles(joints)
                 
-                # Check visibility for each joint calculation
-                # (Assuming your get_standard_angles returns None or 0 for low visibility)
                 for joint_name, angle in angles.items():
                     if angle is not None and angle > 0:
                         history[joint_name].append(angle)
@@ -37,10 +35,9 @@ class AutoCalibrator:
         # Build the full-body ROM profile
         full_body_rom = {}
         max_range = 0
-        primary_joint = None
+        top_joint = None
         
         for joint, angles in history.items():
-            # If the joint was never seen (or seen for less than 5 frames), record as 0
             if not angles or len(angles) < 5:
                 full_body_rom[joint] = {"min_angle": 0.0, "max_angle": 0.0, "range": 0.0}
                 continue
@@ -55,16 +52,35 @@ class AutoCalibrator:
                 "range": round(joint_range, 1)
             }
 
-            # Elect the rep-counting driver (the one that moves the most)
+            # Find the absolute highest moving joint
             if joint_range > max_range:
                 max_range = joint_range
-                primary_joint = joint
+                top_joint = joint
 
-        if not primary_joint:
+        if not top_joint:
             return None
 
+        # --- NEW: Bilateral Symmetry Detection ---
+        primary_joints = [top_joint]
+        
+        # Map joints to their anatomical partners
+        pairs = {
+            "left_shoulder": "right_shoulder", "right_shoulder": "left_shoulder",
+            "left_elbow": "right_elbow", "right_elbow": "left_elbow",
+            "left_knee": "right_knee", "right_knee": "left_knee"
+        }
+
+        if top_joint in pairs:
+            partner_joint = pairs[top_joint]
+            partner_range = full_body_rom[partner_joint]["range"]
+            
+            # If the partner joint moves at least 70% as much as the primary, 
+            # we classify this as a two-arm/two-leg exercise.
+            if partner_range >= (max_range * 0.70):
+                primary_joints.append(partner_joint)
+
         return {
-            "primary_joint": primary_joint,
+            "primary_joints": primary_joints,  # Switched from string to list
             "all_joints": full_body_rom,
             "tolerance": 15.0 
         }

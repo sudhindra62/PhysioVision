@@ -8,37 +8,40 @@
             "thumbnail": "exercise1_thumb.jpg"
         },
         "physics": {
-            "primary_joint": "left_shoulder",
+            "primary_joints": [
+                "left_shoulder",
+                "right_shoulder"
+            ],
             "all_joints": {
                 "left_elbow": {
-                    "min_angle": 90.3,
-                    "max_angle": 174.0,
-                    "range": 83.7
+                    "min_angle": 83.2,
+                    "max_angle": 174.7,
+                    "range": 91.6
                 },
                 "right_elbow": {
-                    "min_angle": 96.4,
-                    "max_angle": 176.4,
-                    "range": 80.1
-                },
-                "left_shoulder": {
-                    "min_angle": 14.7,
-                    "max_angle": 117.4,
-                    "range": 102.8
-                },
-                "right_shoulder": {
-                    "min_angle": 20.8,
-                    "max_angle": 114.4,
+                    "min_angle": 82.1,
+                    "max_angle": 175.8,
                     "range": 93.6
                 },
+                "left_shoulder": {
+                    "min_angle": 20.5,
+                    "max_angle": 145.4,
+                    "range": 124.9
+                },
+                "right_shoulder": {
+                    "min_angle": 19.9,
+                    "max_angle": 138.6,
+                    "range": 118.8
+                },
                 "left_knee": {
-                    "min_angle": 116.3,
-                    "max_angle": 134.2,
-                    "range": 17.8
+                    "min_angle": 101.1,
+                    "max_angle": 131.1,
+                    "range": 29.9
                 },
                 "right_knee": {
-                    "min_angle": 102.6,
-                    "max_angle": 120.0,
-                    "range": 17.5
+                    "min_angle": 107.6,
+                    "max_angle": 133.4,
+                    "range": 25.8
                 }
             },
             "tolerance": 15.0,
@@ -1367,37 +1370,40 @@
             "thumbnail": "exercise2_thumb.jpg"
         },
         "physics": {
-            "primary_joint": "left_elbow",
+            "primary_joints": [
+                "right_shoulder",
+                "left_shoulder"
+            ],
             "all_joints": {
                 "left_elbow": {
-                    "min_angle": 88.0,
-                    "max_angle": 177.9,
-                    "range": 89.9
+                    "min_angle": 85.7,
+                    "max_angle": 173.4,
+                    "range": 87.7
                 },
                 "right_elbow": {
-                    "min_angle": 104.8,
-                    "max_angle": 178.0,
-                    "range": 73.2
+                    "min_angle": 90.8,
+                    "max_angle": 174.8,
+                    "range": 84.0
                 },
                 "left_shoulder": {
-                    "min_angle": 12.2,
-                    "max_angle": 99.6,
-                    "range": 87.4
+                    "min_angle": 17.5,
+                    "max_angle": 121.4,
+                    "range": 103.9
                 },
                 "right_shoulder": {
-                    "min_angle": 15.6,
-                    "max_angle": 94.5,
-                    "range": 78.9
+                    "min_angle": 13.3,
+                    "max_angle": 128.0,
+                    "range": 114.7
                 },
                 "left_knee": {
-                    "min_angle": 104.6,
-                    "max_angle": 126.9,
-                    "range": 22.3
+                    "min_angle": 95.4,
+                    "max_angle": 135.8,
+                    "range": 40.3
                 },
                 "right_knee": {
-                    "min_angle": 98.9,
-                    "max_angle": 115.2,
-                    "range": 16.3
+                    "min_angle": 103.6,
+                    "max_angle": 134.4,
+                    "range": 30.8
                 }
             },
             "tolerance": 15.0,
@@ -2774,37 +2780,40 @@
             "thumbnail": "exercise3_thumb.jpg"
         },
         "physics": {
-            "primary_joint": "right_shoulder",
+            "primary_joints": [
+                "right_elbow",
+                "left_elbow"
+            ],
             "all_joints": {
                 "left_elbow": {
-                    "min_angle": 90.4,
-                    "max_angle": 178.3,
-                    "range": 87.8
+                    "min_angle": 84.4,
+                    "max_angle": 176.0,
+                    "range": 91.5
                 },
                 "right_elbow": {
-                    "min_angle": 102.5,
-                    "max_angle": 176.9,
-                    "range": 74.4
+                    "min_angle": 83.4,
+                    "max_angle": 175.9,
+                    "range": 92.5
                 },
                 "left_shoulder": {
-                    "min_angle": 19.5,
-                    "max_angle": 108.3,
-                    "range": 88.8
+                    "min_angle": 15.3,
+                    "max_angle": 103.4,
+                    "range": 88.1
                 },
                 "right_shoulder": {
-                    "min_angle": 16.0,
-                    "max_angle": 106.7,
-                    "range": 90.7
+                    "min_angle": 13.0,
+                    "max_angle": 87.8,
+                    "range": 74.9
                 },
                 "left_knee": {
-                    "min_angle": 108.8,
-                    "max_angle": 127.3,
-                    "range": 18.5
+                    "min_angle": 103.9,
+                    "max_angle": 126.8,
+                    "range": 22.9
                 },
                 "right_knee": {
-                    "min_angle": 102.2,
-                    "max_angle": 118.7,
-                    "range": 16.5
+                    "min_angle": 109.2,
+                    "max_angle": 131.5,
+                    "range": 22.3
                 }
             },
             "tolerance": 15.0,

@@ -27,8 +27,16 @@ def main():
         
         if config:
             results[video_path.stem] = config
-            print(f"Elected Mover: {config['joint_name']}")
-            print(f"   Range: {config['min_angle']:.1f}° -> {config['max_angle']:.1f}°")
+            
+            # The fixed print statements
+            print(f"Elected Movers: {config.get('primary_joints')}")
+            
+            # Safely grab the range of the first elected joint for the console output
+            first_joint = config.get('primary_joints', [None])[0]
+            if first_joint:
+                min_ang = config['all_joints'][first_joint]['min_angle']
+                max_ang = config['all_joints'][first_joint]['max_angle']
+                print(f"   Range ({first_joint}): {min_ang:.1f}° -> {max_ang:.1f}°")
         else:
             print(f"Failed to extract angles from {video_path.name}")
 
