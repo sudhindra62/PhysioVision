@@ -13,7 +13,6 @@ from datetime import datetime
 from core.vision import VisionEngine
 from core.geometry import PhysioGeometry
 from core.rom_judge import ROMJudge
-from core.config import VIDEOS_DIR
 from core.database import init_db, save_workout, get_analytics_df
 
 # Initialize the DB immediately when the app boots
@@ -160,7 +159,6 @@ def main():
         display_to_key = {data["display_name"]: key for key, data in registry.items()}
         selected_display = st.sidebar.selectbox("Select Exercise", list(display_to_key.keys()))
         
-        # --- NEW: Guide Mode Selection ---
         st.sidebar.markdown("### Guide Mode")
         guide_mode = st.sidebar.radio(
             "Select visual reference type:", 
@@ -170,7 +168,7 @@ def main():
         exercise_key = display_to_key[selected_display]
         active_data = registry[exercise_key]
         physics = active_data["physics"]
-        video_path = VIDEOS_DIR / active_data["video_file"]
+        video_path = ROOT_DIR / "assets" / "videos" / active_data["video_file"]
         
         primary_joints = physics.get("primary_joints", ["Unknown"])
         display_joint_text = ", ".join(primary_joints).replace("_", " ").title()
@@ -187,9 +185,8 @@ def main():
             st.markdown("### AI Elected Mover:")
             st.info(f"🦾 **{display_joint_text}**")
 
-        # --- DYNAMIC IMAGE LOADER (Always load in case they switch modes) ---
         step_images = []
-        steps_dir = ROOT_DIR / "assets" / "steps"
+        steps_dir = ROOT_DIR / "assets" / "images" / exercise_key
         
         if steps_dir.exists():
             image_paths = []
@@ -207,18 +204,16 @@ def main():
                 img = cv2.imread(str(path))
                 if img is not None:
                     step_images.append(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-        # -----------------------------
 
         col1, col2, col3 = st.columns([1.5, 1.5, 1])
 
         with col1:
-            # --- CONDITIONAL UI RENDERING ---
             if guide_mode == "Reference Video (Continuous)":
                 st.markdown("### 1. Reference Video")
                 if video_path.exists():
                     st.video(str(video_path), loop=True, autoplay=True, muted=True)
                 else:
-                    st.info(f"Reference video missing at {video_path}")
+                    st.info(f"Reference video missing at: assets/videos/{active_data['video_file']}")
             else:
                 st.markdown("### 1. Target Form Guide")
                 guide_ui = st.empty() 
@@ -248,7 +243,6 @@ def main():
                     metrics = webrtc_ctx.video_processor.metrics
                     st.session_state.backup_metrics = metrics
                     
-                    # --- ONLY RUN TARGET PROGRESSION IF IMAGE MODE IS ACTIVE ---
                     if guide_mode == "Target Images (Step-by-Step)":
                         num_images = len(step_images)
                         if num_images > 0:
@@ -257,40 +251,56 @@ def main():
                                 st.session_state.ui_direction = "UP"   
                                 
                             current_progress = metrics['progress'] 
+                            current_state = metrics['state']
                             
-                            if num_images > 1:
-                                target_threshold = (st.session_state.ui_target_idx / (num_images - 1)) * 100.0
+                            # --- 1. REST CALIBRATION GATE ---
+                            # If we are on the first image, wait until they are physically at rest to unlock
+                            if st.session_state.ui_target_idx == 0:
+                                if current_progress <= 25.0:
+                                    # Properly tracked at rest! Point to the next image to begin the rep.
+                                    st.session_state.ui_target_idx = min(1, num_images - 1)
+                                    st.session_state.ui_direction = "UP"
                             else:
-                                target_threshold = 0.0
+                                target_threshold = (st.session_state.ui_target_idx / (num_images - 1)) * 100.0
 
-                            hit_target = False
-                            
-                            if st.session_state.ui_direction == "UP":
-                                if current_progress >= (target_threshold - 15.0):
-                                    hit_target = True
-                            else: 
-                                if current_progress <= (target_threshold + 15.0):
-                                    hit_target = True
-
-                            if hit_target and num_images > 1:
-                                if st.session_state.ui_direction == "UP":
-                                    if st.session_state.ui_target_idx < num_images - 1:
-                                        st.session_state.ui_target_idx += 1
-                                    else:
-                                        st.session_state.ui_direction = "DOWN"
-                                        st.session_state.ui_target_idx = num_images - 2
+                                # --- 2. PUNISHMENT RESET GATE ---
+                                # If they drop their arms before hitting the peak (state changes to LOWERING),
+                                # or if they completely break the sequence, immediately reset to the Rest Image.
+                                if current_state == "LOWERING" and st.session_state.ui_direction == "UP":
+                                    st.session_state.ui_target_idx = 0
+                                    st.session_state.ui_direction = "UP"
                                 else:
-                                    if st.session_state.ui_target_idx > 0:
-                                        st.session_state.ui_target_idx -= 1
-                                    else:
-                                        st.session_state.ui_direction = "UP"
-                                        st.session_state.ui_target_idx = 1
+                                    # Normal progression logic
+                                    hit_target = False
+                                    
+                                    if st.session_state.ui_direction == "UP":
+                                        if current_progress >= (target_threshold - 15.0):
+                                            hit_target = True
+                                    else: 
+                                        if current_progress <= (target_threshold + 15.0):
+                                            hit_target = True
+
+                                    if hit_target and num_images > 1:
+                                        if st.session_state.ui_direction == "UP":
+                                            if st.session_state.ui_target_idx < num_images - 1:
+                                                st.session_state.ui_target_idx += 1
+                                            else:
+                                                # Reached the Peak, send them down
+                                                st.session_state.ui_direction = "DOWN"
+                                                st.session_state.ui_target_idx = num_images - 2
+                                        else:
+                                            if st.session_state.ui_target_idx > 0:
+                                                st.session_state.ui_target_idx -= 1
+                                            else:
+                                                # Cycle Complete! Lock back to 0 to require Rest Calibration again
+                                                st.session_state.ui_target_idx = 0
+                                                st.session_state.ui_direction = "UP"
                             
+                            # Safely render the image
                             safe_idx = max(0, min(num_images - 1, st.session_state.ui_target_idx))
                             guide_ui.image(step_images[safe_idx], channels="RGB", use_container_width=True)
                         else:
-                            guide_ui.info("Add sequentially named images (1.jpg, 2.jpg) to assets/steps/ to enable the Form Guide.")
-                    # --------------------------------------------------------
+                            guide_ui.info(f"Add sequentially named images (1.jpg, 2.jpg) to `assets/images/{exercise_key}/` to enable the Form Guide.")
 
                     score_color = "green" if metrics["avg_score"] > 80 else "orange" if metrics["avg_score"] > 40 else "red"
                     state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING", "PEAK"] else "green" if metrics["state"] == "RESTING" else "gray"
