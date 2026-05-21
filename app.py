@@ -36,7 +36,6 @@ class PhysioProcessor(VideoProcessorBase):
         self.math_calc = PhysioGeometry()
         
         self.judge = None
-        # Changed to support multiple active joints
         self.joint_names = []
         
         self.metrics = {"reps": 0, "state": "INITIALIZING", "progress": 0.0, "last_score": 0.0, "avg_score": 0.0}
@@ -67,14 +66,12 @@ class PhysioProcessor(VideoProcessorBase):
         if joints:
             self.draw_skeleton(img, joints)
             
-            # Using the new joint_names list
             if self.judge and self.joint_names:
                 raw_angles = self.math_calc.get_standard_angles(joints)
                 clean_angles = {}
                 
                 for j_name, angle in raw_angles.items():
                     if j_name in self.joint_dependencies:
-                        # Stricter visibility filter: block garbage frames below 65% confidence
                         is_visible = all(joints[idx].visibility > 0.65 for idx in self.joint_dependencies[j_name])
                         clean_angles[j_name] = angle if is_visible else None
                     else:
@@ -154,7 +151,6 @@ def main():
     elif app_mode == "Live Tracker":
         st.title("PhysioVision Pro: ROM & Rep Tracking")
 
-        # Memory Backup for Database Saves
         if "workout_start" not in st.session_state:
             st.session_state.workout_start = datetime.now()
         if "backup_metrics" not in st.session_state:
@@ -164,17 +160,21 @@ def main():
         display_to_key = {data["display_name"]: key for key, data in registry.items()}
         selected_display = st.sidebar.selectbox("Select Exercise", list(display_to_key.keys()))
         
+        # --- NEW: Guide Mode Selection ---
+        st.sidebar.markdown("### Guide Mode")
+        guide_mode = st.sidebar.radio(
+            "Select visual reference type:", 
+            ["Target Images (Step-by-Step)", "Reference Video (Continuous)"]
+        )
+        
         exercise_key = display_to_key[selected_display]
         active_data = registry[exercise_key]
-        video_path = VIDEOS_DIR / active_data["video_file"]
         physics = active_data["physics"]
+        video_path = VIDEOS_DIR / active_data["video_file"]
         
-        # --- NEW: Safely extract multiple joints ---
         primary_joints = physics.get("primary_joints", ["Unknown"])
         display_joint_text = ", ".join(primary_joints).replace("_", " ").title()
 
-        # The new ROMJudge reads max/min ranges directly from "all_joints", 
-        # so we no longer need to pass singular min_angle/max_angle here.
         judge_config = {
             "primary_joints": primary_joints,
             "tolerance": physics.get("tolerance", 15.0),
@@ -187,12 +187,41 @@ def main():
             st.markdown("### AI Elected Mover:")
             st.info(f"🦾 **{display_joint_text}**")
 
+        # --- DYNAMIC IMAGE LOADER (Always load in case they switch modes) ---
+        step_images = []
+        steps_dir = ROOT_DIR / "assets" / "steps"
+        
+        if steps_dir.exists():
+            image_paths = []
+            for ext in ["*.jpg", "*.jpeg", "*.png"]:
+                image_paths.extend(list(steps_dir.glob(ext)))
+                
+            valid_paths = []
+            for p in image_paths:
+                if p.stem.isdigit():
+                    valid_paths.append((int(p.stem), p))
+                    
+            valid_paths.sort(key=lambda x: x[0])
+            
+            for _, path in valid_paths:
+                img = cv2.imread(str(path))
+                if img is not None:
+                    step_images.append(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        # -----------------------------
+
         col1, col2, col3 = st.columns([1.5, 1.5, 1])
 
         with col1:
-            st.markdown("### 1. Watch Ideal Form")
-            if video_path.exists():
-                st.video(str(video_path), loop=True, autoplay=True, muted=True)
+            # --- CONDITIONAL UI RENDERING ---
+            if guide_mode == "Reference Video (Continuous)":
+                st.markdown("### 1. Reference Video")
+                if video_path.exists():
+                    st.video(str(video_path), loop=True, autoplay=True, muted=True)
+                else:
+                    st.info(f"Reference video missing at {video_path}")
+            else:
+                st.markdown("### 1. Target Form Guide")
+                guide_ui = st.empty() 
 
         with col2:
             st.markdown("### 2. Live Tracking")
@@ -210,7 +239,6 @@ def main():
             state_ui = st.empty()
             
             if webrtc_ctx.state.playing and webrtc_ctx.video_processor:
-                # Pass the LIST of joints instead of a single string
                 webrtc_ctx.video_processor.joint_names = primary_joints
                 
                 if not webrtc_ctx.video_processor.judge:
@@ -218,11 +246,54 @@ def main():
                 
                 while webrtc_ctx.state.playing:
                     metrics = webrtc_ctx.video_processor.metrics
-                    
                     st.session_state.backup_metrics = metrics
                     
+                    # --- ONLY RUN TARGET PROGRESSION IF IMAGE MODE IS ACTIVE ---
+                    if guide_mode == "Target Images (Step-by-Step)":
+                        num_images = len(step_images)
+                        if num_images > 0:
+                            if "ui_target_idx" not in st.session_state:
+                                st.session_state.ui_target_idx = 0     
+                                st.session_state.ui_direction = "UP"   
+                                
+                            current_progress = metrics['progress'] 
+                            
+                            if num_images > 1:
+                                target_threshold = (st.session_state.ui_target_idx / (num_images - 1)) * 100.0
+                            else:
+                                target_threshold = 0.0
+
+                            hit_target = False
+                            
+                            if st.session_state.ui_direction == "UP":
+                                if current_progress >= (target_threshold - 15.0):
+                                    hit_target = True
+                            else: 
+                                if current_progress <= (target_threshold + 15.0):
+                                    hit_target = True
+
+                            if hit_target and num_images > 1:
+                                if st.session_state.ui_direction == "UP":
+                                    if st.session_state.ui_target_idx < num_images - 1:
+                                        st.session_state.ui_target_idx += 1
+                                    else:
+                                        st.session_state.ui_direction = "DOWN"
+                                        st.session_state.ui_target_idx = num_images - 2
+                                else:
+                                    if st.session_state.ui_target_idx > 0:
+                                        st.session_state.ui_target_idx -= 1
+                                    else:
+                                        st.session_state.ui_direction = "UP"
+                                        st.session_state.ui_target_idx = 1
+                            
+                            safe_idx = max(0, min(num_images - 1, st.session_state.ui_target_idx))
+                            guide_ui.image(step_images[safe_idx], channels="RGB", use_container_width=True)
+                        else:
+                            guide_ui.info("Add sequentially named images (1.jpg, 2.jpg) to assets/steps/ to enable the Form Guide.")
+                    # --------------------------------------------------------
+
                     score_color = "green" if metrics["avg_score"] > 80 else "orange" if metrics["avg_score"] > 40 else "red"
-                    state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING_VALID", "LOWERING_INVALID"] else "green" if metrics["state"] == "RESTING" else "gray"
+                    state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING", "PEAK"] else "green" if metrics["state"] == "RESTING" else "gray"
 
                     rep_ui.markdown(f"<h1 style='text-align: center; font-size: 60px;'>Reps: {metrics['reps']}</h1>", unsafe_allow_html=True)
                     score_ui.markdown(f"""
@@ -233,6 +304,7 @@ def main():
                         </div>
                     """, unsafe_allow_html=True)
                     state_ui.markdown(f"<h3 style='text-align: center; color: {state_color};'>{metrics['state'].replace('_', ' ')}</h3>", unsafe_allow_html=True)
+                    
                     time.sleep(0.05) 
                     
             st.markdown("---")
@@ -244,7 +316,7 @@ def main():
                     
                     success = save_workout(
                         exercise_name=active_data["display_name"],
-                        target_joint=display_joint_text, # Saves BOTH joints to the DB
+                        target_joint=display_joint_text,
                         reps=final_metrics["reps"],
                         avg_score=final_metrics["avg_score"],
                         duration=duration
