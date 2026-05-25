@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from core.vision import VisionEngine
 from core.geometry import PhysioGeometry
+from collections import defaultdict
 
 class AutoCalibrator:
     def __init__(self):
@@ -11,12 +12,8 @@ class AutoCalibrator:
     def scan_reference_video(self, video_path: str):
         cap = cv2.VideoCapture(str(video_path))
         
-        # Track all joints
-        history = {
-            "left_elbow": [], "right_elbow": [],
-            "left_shoulder": [], "right_shoulder": [],
-            "left_knee": [], "right_knee": []
-        }
+        # --- FIX 1: Use a dynamic dictionary so it never crashes on new angles ---
+        history = defaultdict(list)
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -52,15 +49,15 @@ class AutoCalibrator:
                 "range": round(joint_range, 1)
             }
 
-            # Find the absolute highest moving joint
-            if joint_range > max_range:
+            # --- FIX 2: Prevent the AI from picking a 'plane' gatekeeper as the main exercise joint ---
+            if joint_range > max_range and not joint.endswith("_plane"):
                 max_range = joint_range
                 top_joint = joint
 
         if not top_joint:
             return None
 
-        # --- NEW: Bilateral Symmetry Detection ---
+        # --- Bilateral Symmetry Detection ---
         primary_joints = [top_joint]
         
         # Map joints to their anatomical partners
@@ -72,15 +69,17 @@ class AutoCalibrator:
 
         if top_joint in pairs:
             partner_joint = pairs[top_joint]
-            partner_range = full_body_rom[partner_joint]["range"]
-            
-            # If the partner joint moves at least 70% as much as the primary, 
-            # we classify this as a two-arm/two-leg exercise.
-            if partner_range >= (max_range * 0.70):
-                primary_joints.append(partner_joint)
+            # Ensure the partner joint actually exists in our scanned data
+            if partner_joint in full_body_rom:
+                partner_range = full_body_rom[partner_joint]["range"]
+                
+                # If the partner joint moves at least 70% as much as the primary, 
+                # we classify this as a two-arm/two-leg exercise.
+                if partner_range >= (max_range * 0.70):
+                    primary_joints.append(partner_joint)
 
         return {
-            "primary_joints": primary_joints,  # Switched from string to list
+            "primary_joints": primary_joints,  
             "all_joints": full_body_rom,
             "tolerance": 15.0 
         }

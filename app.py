@@ -15,7 +15,6 @@ from core.geometry import PhysioGeometry
 from core.rom_judge import ROMJudge
 from core.database import init_db, save_workout, get_analytics_df
 
-# Initialize the DB immediately when the app boots
 init_db()
 
 ROOT_DIR = Path(__file__).parent
@@ -26,9 +25,6 @@ SKELETON_CONNECTIONS = [
     (23, 25), (25, 27), (24, 26), (26, 28)
 ]
 
-# -------------------------------------------------------------------
-# 1. THE WEBRTC THREAD
-# -------------------------------------------------------------------
 class PhysioProcessor(VideoProcessorBase):
     def __init__(self):
         self.engine = VisionEngine()
@@ -39,10 +35,13 @@ class PhysioProcessor(VideoProcessorBase):
         
         self.metrics = {"reps": 0, "state": "INITIALIZING", "progress": 0.0, "last_score": 0.0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready..."}
 
+        # --- UPDATED: Included plane dependencies ---
         self.joint_dependencies = {
             "left_elbow": [11, 13, 15], "right_elbow": [12, 14, 16],
             "left_shoulder": [23, 11, 13], "right_shoulder": [24, 12, 14],
-            "left_knee": [23, 25, 27], "right_knee": [24, 26, 28]
+            "left_knee": [23, 25, 27], "right_knee": [24, 26, 28],
+            "left_shoulder_plane": [11, 12, 13], "right_shoulder_plane": [11, 12, 14],
+            "left_hip_plane": [23, 24, 25], "right_hip_plane": [23, 24, 26]
         }
 
     def draw_skeleton(self, img, joints):
@@ -80,9 +79,6 @@ class PhysioProcessor(VideoProcessorBase):
                   
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
-# -------------------------------------------------------------------
-# 2. UI HELPERS (DASHBOARD)
-# -------------------------------------------------------------------
 def load_master_registry():
     cache_path = ROOT_DIR / "data" / "master_registry.json"
     if cache_path.exists():
@@ -92,7 +88,6 @@ def load_master_registry():
 
 def render_dashboard_view():
     st.title("📊 Recovery Analytics Dashboard")
-    
     df = get_analytics_df()
     
     if df.empty:
@@ -112,11 +107,7 @@ def render_dashboard_view():
     st.subheader("Form Progression Over Time")
     
     fig = px.line(
-        df, 
-        x="timestamp", 
-        y="average_score", 
-        color="exercise_name",
-        markers=True,
+        df, x="timestamp", y="average_score", color="exercise_name", markers=True,
         title="Average Form Quality per Session",
         labels={"average_score": "Form Score (%)", "timestamp": "Date", "exercise_name": "Exercise"}
     )
@@ -130,9 +121,6 @@ def render_dashboard_view():
     
     st.dataframe(display_df, use_container_width=True, hide_index=True)
 
-# -------------------------------------------------------------------
-# 3. MAIN APP ROUTING
-# -------------------------------------------------------------------
 def main():
     st.set_page_config(page_title="PhysioVision Pro", layout="wide")
 
@@ -186,7 +174,6 @@ def main():
             st.markdown("### AI Elected Mover:")
             st.info(f"🦾 **{display_joint_text}**")
 
-        # --- DYNAMIC IMAGE LOADER WITH STANDARDIZED SIZING ---
         step_images = []
         steps_dir = ROOT_DIR / "assets" / "images" / exercise_key
         
@@ -202,7 +189,7 @@ def main():
                     
             valid_paths.sort(key=lambda x: x[0])
             
-            target_size = None # Anchor dimension to prevent cv2.addWeighted crashes
+            target_size = None
             
             for _, path in valid_paths:
                 img = cv2.imread(str(path))
@@ -262,7 +249,6 @@ def main():
                                 st.session_state.ui_target_idx = 0     
                                 st.session_state.ui_direction = "UP"
                                 st.session_state.last_transition_time = time.time() 
-                                # Fade Trackers
                                 st.session_state.prev_target_idx = 0
                                 st.session_state.fade_start_time = 0.0
                              
@@ -279,13 +265,10 @@ def main():
 
                             current_time = time.time()
                             time_since_last = current_time - st.session_state.last_transition_time
-                            
                             min_wait = 2.0 if st.session_state.ui_target_idx == 0 else 0.5
 
                             if hit_target and time_since_last > min_wait and num_images > 1:
                                 st.session_state.last_transition_time = current_time
-                                
-                                # Lock in the previous frame and reset the clock before changing indices
                                 st.session_state.prev_target_idx = st.session_state.ui_target_idx
                                 st.session_state.fade_start_time = current_time
                                 
@@ -302,7 +285,6 @@ def main():
                                         st.session_state.ui_direction = "UP"
                                         st.session_state.ui_target_idx = 1
                             
-                            # --- OPENCV ALPHA BLENDING ---
                             safe_current_idx = max(0, min(num_images - 1, st.session_state.ui_target_idx))
                             safe_prev_idx = max(0, min(num_images - 1, st.session_state.prev_target_idx))
 
@@ -313,19 +295,14 @@ def main():
                             time_in_fade = current_time - st.session_state.fade_start_time
 
                             if time_in_fade < fade_duration and safe_current_idx != safe_prev_idx:
-                                # Calculate linear interpolation factor
-                                alpha = time_in_fade / fade_duration
-                                alpha = max(0.0, min(1.0, alpha)) # Clamp for safety
-                                
+                                alpha = max(0.0, min(1.0, time_in_fade / fade_duration))
                                 blended = cv2.addWeighted(prev_img, 1.0 - alpha, current_img, alpha, 0)
                                 guide_ui.image(blended, channels="RGB", use_container_width=True)
                             else:
-                                # Transition complete, render static target
                                 guide_ui.image(current_img, channels="RGB", use_container_width=True)
                         else:
                             guide_ui.info(f"Add sequentially named images (1.jpg, 2.jpg) to `assets/images/{exercise_key}/` to enable the Form Guide.")
 
-                    # --- Render the Feedback ---
                     feedback_text = metrics.get("feedback", "Ready...")
                     f_bg_color = "#1e4620" if "Great" in feedback_text else "#4a1911" if "Ready" not in feedback_text else "#2b2b2b"
                     f_text_color = "#a5d6a7" if "Great" in feedback_text else "#ffab91" if "Ready" not in feedback_text else "gray"
@@ -354,10 +331,8 @@ def main():
             st.markdown("---")
             if st.button("💾 Finish & Save Workout", use_container_width=True, type="primary"):
                 final_metrics = st.session_state.backup_metrics
-                
                 if final_metrics["reps"] > 0:
                     duration = int((datetime.now() - st.session_state.workout_start).total_seconds())
-                    
                     success = save_workout(
                         exercise_name=active_data["display_name"],
                         target_joint=display_joint_text,
@@ -366,7 +341,6 @@ def main():
                         duration=duration,
                         rep_scores=final_metrics.get("rep_scores", [])
                     )
-                    
                     if success:
                         st.success(f"Successfully saved {final_metrics['reps']} reps to the database!")
                         st.session_state.workout_start = datetime.now()

@@ -2,7 +2,7 @@ from pathlib import Path
 
 # --- Project Paths ---
 ROOT_DIR = Path(__file__).parent.parent
-VIDEOS_DIR = ROOT_DIR / "videos"
+VIDEOS_DIR = ROOT_DIR/ "assets" / "videos"
 DATA_DIR = ROOT_DIR / "data"  # Adding this back in since your script imports it!
 
 # Dynamically generate the dictionary expected by your extraction script

@@ -10,7 +10,7 @@ class ROMJudge:
         self.last_rep_score = 0.0  
         self.total_score_accumulator = 0.0 
         self.average_score = 0.0 
-        self.rep_scores = [] # Tracks individual rep scores
+        self.rep_scores = [] 
         
         self.smoothed_angles = {}
         self.alpha = 0.35        
@@ -23,8 +23,8 @@ class ROMJudge:
         self.min_achieved_pct = 1.0
         
         # --- STRICT CYCLE LOCKS ---
-        self.BOTTOM_THRESHOLD = 0.25  # The 'Start/End' Gate
-        self.TOP_THRESHOLD = 0.80     # The 'Peak' Gate
+        self.BOTTOM_THRESHOLD = 0.25 
+        self.TOP_THRESHOLD = 0.80    
         self.valid_peak_reached = False 
         self.current_rep_errors = []
 
@@ -89,10 +89,6 @@ class ROMJudge:
             return max(0.0, 100.0 - ((avg_error - 15.0) * 3.33))
 
     def _generate_live_feedback(self, user_angles: dict) -> str:
-        """
-        Passive observer: Generates text prompts without altering any state, 
-        scores, or progress variables. Now includes precise angular offsets.
-        """
         if not self.golden_trajectory or self.state == "RESTING":
             return "Ready..."
 
@@ -111,12 +107,9 @@ class ROMJudge:
             if u_ang is not None and g_ang is not None:
                 diff = g_ang - u_ang
                 
-                # 15.0 degrees is the tolerance threshold
                 if abs(diff) > 15.0:
                     direction = "Extend/Open" if diff > 0 else "Bend/Close"
                     clean_name = joint.replace("_", " ").title()
-                    
-                    # --- NEW: Calculate precise offset for the UI ---
                     offset = round(abs(diff), 1)
                     feedback_list.append(f"{direction} {clean_name} ({offset}°)")
 
@@ -124,8 +117,8 @@ class ROMJudge:
 
     def process_frame(self, raw_angles: dict) -> dict:
         clean_angles = {}
-        for joint in self.active_joints:
-            angle = raw_angles.get(joint)
+        # Changed to process ALL angles, including the new plane angles
+        for joint, angle in raw_angles.items():
             if angle is not None:
                 if joint not in self.smoothed_angles:
                     self.smoothed_angles[joint] = angle
@@ -136,30 +129,58 @@ class ROMJudge:
         pct = self.get_completion_percentage(clean_angles)
         frame_acc = self._calculate_frame_accuracy(clean_angles)
 
+        # --- NEW: DYNAMIC PLANE GATEKEEPER ---
+        plane_is_valid = True
+        plane_error_message = ""
+
+        if self.golden_trajectory and self.primary_joints:
+            def get_avg_primary(frame):
+                vals = [frame.get(j, 0.0) for j in self.primary_joints if j in frame]
+                return sum(vals) / len(vals) if vals else 0.0
+
+            user_target = get_avg_primary(clean_angles)
+            best_frame = min(self.golden_trajectory, key=lambda f: abs(get_avg_primary(f) - user_target))
+
+            primary = self.primary_joints[0]
+            # Route elbow/knee logic to their root joint's plane
+            base_joint = primary.replace("_elbow", "_shoulder").replace("_knee", "_hip")
+            plane_key = f"{base_joint}_plane"
+
+            user_plane = clean_angles.get(plane_key)
+            golden_plane = best_frame.get(plane_key)
+
+            # Validate the user's transverse plane against the golden record
+            if user_plane is not None and golden_plane is not None:
+                plane_diff = user_plane - golden_plane
+                if abs(plane_diff) > 25.0: # 25 degree strict plane tolerance
+                    plane_is_valid = False
+                    action = "FORWARD" if plane_diff > 0 else "SIDEWAYS"
+                    part = "ARM" if "shoulder" in base_joint else "LEG"
+                    plane_error_message = f"BRING {part} MORE {action} ({round(abs(plane_diff), 1)}°)"
+
         # ---------------------------------------------------------
         # THE STRICT LOOP: Start -> Top -> Start
         # ---------------------------------------------------------
         
         if self.state == "RESTING":
-            if pct > self.BOTTOM_THRESHOLD:
-                # BREAKING REST: Begin the cycle
+            if pct > self.BOTTOM_THRESHOLD and plane_is_valid:
                 self.state = "LIFTING"
                 self.max_achieved_pct = pct
                 self.min_achieved_pct = 1.0
                 self.current_rep_errors = [frame_acc]
-                self.valid_peak_reached = False  # Reset the lock
+                self.valid_peak_reached = False 
 
         elif self.state == "LIFTING":
             self.max_achieved_pct = max(self.max_achieved_pct, pct)
             self.current_rep_errors.append(frame_acc)
 
             if pct >= self.TOP_THRESHOLD:
-                # REACHING TOP: Unlock the gateway
-                self.state = "PEAK"
-                self.valid_peak_reached = True 
+                # ONLY grant PEAK if the plane geometry is correct
+                if plane_is_valid:
+                    self.state = "PEAK"
+                    self.valid_peak_reached = True 
 
             elif pct < self.max_achieved_pct - 0.15:
-                # ABANDONED REP: They dropped before hitting the peak
                 self.state = "LOWERING"
                 self.min_achieved_pct = pct
 
@@ -168,7 +189,6 @@ class ROMJudge:
             self.current_rep_errors.append(frame_acc)
 
             if pct < self.max_achieved_pct - 0.15:
-                # STARTING DESCENT
                 self.state = "LOWERING"
                 self.min_achieved_pct = pct
 
@@ -180,9 +200,7 @@ class ROMJudge:
             is_bouncing = pct > self.min_achieved_pct + 0.15
 
             if is_resting:
-                # RETURNING TO START: Evaluate the cycle
                 if self.valid_peak_reached:
-                    # They successfully completed the full loop
                     base_score = min(100.0, ((self.max_achieved_pct - self.min_achieved_pct) / 0.80) * 100.0)
                     form_accuracy = sum(self.current_rep_errors) / len(self.current_rep_errors) if self.current_rep_errors else 100.0
                     
@@ -195,18 +213,19 @@ class ROMJudge:
                         self.average_score = self.total_score_accumulator / self.reps
                         self.rep_scores.append(calculated_rep_score)
 
-                # Force reset everything for the next cycle
                 self.state = "RESTING"
                 self.valid_peak_reached = False
                 self.current_rep_errors = []
 
             elif is_bouncing:
-                # Bounced back up before finishing the rep
                 self.state = "LIFTING"
                 self.max_achieved_pct = pct
 
-        # --- NEW: Call the passive observer right before exit ---
         current_feedback = self._generate_live_feedback(clean_angles)
+
+        # --- Override Feedback if Gatekeeper activated ---
+        if not plane_is_valid and pct > self.BOTTOM_THRESHOLD:
+            current_feedback = plane_error_message
 
         return {
             "reps": self.reps,
