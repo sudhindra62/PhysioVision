@@ -1,3 +1,10 @@
+"""
+Auto-Calibrator Module
+
+A utility module designed to autonomously convert raw reference videos into 
+mathematical JSON rule sets. It eliminates the need to manually hardcode 
+ranges of motion for new exercises.
+"""
 import cv2
 import numpy as np
 from core.vision import VisionEngine
@@ -5,14 +12,43 @@ from core.geometry import PhysioGeometry
 from collections import defaultdict
 
 class AutoCalibrator:
+    """
+    Scans physical reference videos to map anatomical ranges of motion, automatically 
+    electing the primary mover and identifying bilateral symmetries for the registry.
+    """
+
     def __init__(self):
+        """
+        Initializes the underlying Vision and Geometry engines required to 
+        process the reference video.
+        """
         self.engine = VisionEngine()
         self.math_calc = PhysioGeometry()
 
-    def scan_reference_video(self, video_path: str):
+    def scan_reference_video(self, video_path: str) -> dict | None:
+        """
+        Processes a video frame-by-frame to generate the base mathematical limits 
+        for an exercise. 
+
+        This algorithm uses the 5th and 95th percentiles of recorded angles to 
+        safely ignore anomalous tracking spikes. It automatically determines the 
+        target of the exercise by finding the joint with the largest Range of 
+        Motion (ROM), and uses a 70% threshold to detect if the movement is 
+        bilateral (e.g., a standard squat uses both knees).
+
+        Args:
+            video_path (str): The absolute or relative path to the local MP4 file.
+
+        Returns:
+            dict | None: A compiled physics rule set containing:
+                         - 'primary_joints': List of the main active joints.
+                         - 'all_joints': Dict containing min, max, and range for every joint.
+                         - 'tolerance': Default strictness threshold (float).
+                         Returns None if no joints are detected in the video.
+        """
         cap = cv2.VideoCapture(str(video_path))
         
-        # --- FIX 1: Use a dynamic dictionary so it never crashes on new angles ---
+        # Use a dynamic dictionary so it never crashes on new angles
         history = defaultdict(list)
 
         while cap.isOpened():
@@ -39,6 +75,7 @@ class AutoCalibrator:
                 full_body_rom[joint] = {"min_angle": 0.0, "max_angle": 0.0, "range": 0.0}
                 continue
             
+            # Use percentiles to filter out 3D tracking anomalies/jitter
             true_min = float(np.percentile(angles, 5))
             true_max = float(np.percentile(angles, 95))
             joint_range = true_max - true_min
@@ -49,7 +86,7 @@ class AutoCalibrator:
                 "range": round(joint_range, 1)
             }
 
-            # --- FIX 2: Prevent the AI from picking a 'plane' gatekeeper as the main exercise joint ---
+            # Prevent the AI from picking a 'plane' gatekeeper as the main exercise joint
             if joint_range > max_range and not joint.endswith("_plane"):
                 max_range = joint_range
                 top_joint = joint

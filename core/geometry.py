@@ -1,13 +1,36 @@
+"""
+Geometry Engine Module
+
+A stateless mathematical utility module responsible for converting raw 3D spatial 
+coordinates (MediaPipe landmarks) into usable biomechanical degrees and tracking planes.
+"""
 import numpy as np
 from typing import List, Dict
 from .entities import Joint
 
 class PhysioGeometry:
+    """
+    A collection of pure geometric functions for calculating joint angles 
+    and enforcing 3D spatial planes via virtual joint generation.
+    """
+
     @staticmethod
     def get_angle(a: Joint, b: Joint, c: Joint) -> float:
         """
-        Calculates the angle at vertex B using 3D vector dot products.
-        Formula: theta = arccos( (ba . bc) / (|ba| * |bc|) )
+        Calculates the absolute 3D angle at a specific vertex using vector dot products.
+        
+        Uses the formula: theta = arccos( (ba . bc) / (|ba| * |bc|) )
+        Includes mathematical safeguards against division by zero and floating-point 
+        overflows that can cause arccos to return NaN.
+
+        Args:
+            a (Joint): The starting joint coordinate.
+            b (Joint): The vertex joint coordinate (the pivot point/angle center).
+            c (Joint): The ending joint coordinate.
+
+        Returns:
+            float: The calculated angle in degrees (0.0 to 180.0). Returns 0.0 
+                   if vector magnitudes are zero.
         """
         # Create 3D vectors relative to joint B
         ba = np.array([a.x - b.x, a.y - b.y, a.z - b.z])
@@ -28,7 +51,21 @@ class PhysioGeometry:
         return float(np.degrees(angle))
 
     def get_standard_angles(self, joints: List[Joint]) -> Dict[str, float]:
-        """Maps specific MediaPipe indices to physiotherapeutic joint names and transverse planes."""
+        """
+        Extracts both standard anatomical bends and virtual transverse plane angles.
+
+        Maps specific MediaPipe indices to physiotherapeutic joint names. To track 
+        forward vs. lateral movement, it dynamically generates virtual "mid_shoulder" 
+        and "mid_hip" joints to act as transverse plane anchors.
+
+        Args:
+            joints (List[Joint]): The full array of 33 extracted MediaPipe landmarks.
+
+        Returns:
+            Dict[str, float]: A dictionary mapping anatomical string names to 
+                              calculated degrees.
+                              Example: {"left_elbow": 145.2, "left_shoulder_plane": 92.1}
+        """
         angles = {
             "left_elbow": self.get_angle(joints[11], joints[13], joints[15]),
             "right_elbow": self.get_angle(joints[12], joints[14], joints[16]),
@@ -39,6 +76,7 @@ class PhysioGeometry:
         }
 
         # --- NEW: Virtual Joints for Plane Validation ---
+        # Averages the left and right sides to create a center-mass anchor
         mid_shoulder = Joint(
             x=(joints[11].x + joints[12].x) / 2.0,
             y=(joints[11].y + joints[12].y) / 2.0,

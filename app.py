@@ -1,4 +1,13 @@
+"""
+Application Entry Point (Streamlit UI & WebRTC Orchestrator)
+
+Manages the main visual user interface and coordinates the asynchronous execution 
+of the real-time computer vision pipeline. Bridges browser-side operations 
+(WebRTC video, native Web Speech TTS execution) with server-side processing modules 
+and the permanent data persistence layer.
+"""
 import streamlit as st
+import streamlit.components.v1 as components
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
 import cv2
 import time
@@ -9,16 +18,17 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 
-# Import our custom architecture
 from core.vision import VisionEngine
 from core.geometry import PhysioGeometry
 from core.rom_judge import ROMJudge
 from core.database import init_db, save_workout, get_analytics_df
 
+# Initialize structural schema settings within our local SQLite container
 init_db()
 
 ROOT_DIR = Path(__file__).parent
 
+# High-visibility landmarks array index map for painting skeletal overlay lines
 SKELETON_CONNECTIONS = [
     (11, 13), (13, 15), (12, 14), (14, 16),
     (11, 12), (23, 24), (11, 23), (12, 24),
@@ -26,16 +36,30 @@ SKELETON_CONNECTIONS = [
 ]
 
 class PhysioProcessor(VideoProcessorBase):
+    """
+    Asynchronous frame processing class inherited from streamlit-webrtc.
+    
+    Acts as a non-blocking background thread worker that handles camera frame capture, 
+    routes image bytes through computer vision and mathematical modules, paints 
+    the annotated skeletal feedback matrix, and exposes a shared memory dictionary 
+    for UI rendering.
+    """
+
     def __init__(self):
+        """Initializes internal structural wrappers and sets default metrics structures."""
         self.engine = VisionEngine()
         self.math_calc = PhysioGeometry()
         
         self.judge = None
         self.joint_names = []
         
-        self.metrics = {"reps": 0, "state": "INITIALIZING", "progress": 0.0, "last_score": 0.0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready..."}
+        self.metrics = {
+            "reps": 0, "state": "INITIALIZING", "progress": 0.0, 
+            "last_score": 0.0, "avg_score": 0.0, "rep_scores": [], 
+            "feedback": "Ready...", "tts_feedback": ""
+        }
 
-        # --- UPDATED: Included plane dependencies ---
+        # MediaPipe landmark indices mapping to ensure primary/secondary visibility tracking
         self.joint_dependencies = {
             "left_elbow": [11, 13, 15], "right_elbow": [12, 14, 16],
             "left_shoulder": [23, 11, 13], "right_shoulder": [24, 12, 14],
@@ -45,6 +69,13 @@ class PhysioProcessor(VideoProcessorBase):
         }
 
     def draw_skeleton(self, img, joints):
+        """
+        Paints the high-visibility visual feedback skeleton directly onto the video array matrix.
+
+        Args:
+            img (np.ndarray): The target raw BGR image array.
+            joints (list): Collection of active landmarks containing screen space mapping coordinates.
+        """
         h, w = img.shape[:2]
         for p1, p2 in SKELETON_CONNECTIONS:
             if joints[p1].visibility > 0.5 and joints[p2].visibility > 0.5:
@@ -57,7 +88,20 @@ class PhysioProcessor(VideoProcessorBase):
                 cx, cy = int(joints[idx].screen_x * w), int(joints[idx].screen_y * h)
                 cv2.circle(img, (cx, cy), 6, (0, 255, 0), -1)
 
-    def recv(self, frame): 
+    def recv(self, frame) -> av.VideoFrame:
+        """
+        Asynchronous frame processing callback executed for every incoming WebRTC packet.
+
+        Extracts the uncompressed image matrix, isolates skeletal landmarks, extracts 
+        geometric coordinates while checking visibility bounds to ignore occluded fields, 
+        and updates the shared reference metrics structure.
+
+        Args:
+            frame (av.VideoFrame): Immediate raw video frame from the client web browser.
+
+        Returns:
+            av.VideoFrame: The annotated frame object packed back into WebRTC format specifications.
+        """
         img = frame.to_ndarray(format="bgr24")
         joints = self.engine.process_frame(img)
         
@@ -68,6 +112,7 @@ class PhysioProcessor(VideoProcessorBase):
                 raw_angles = self.math_calc.get_standard_angles(joints)
                 clean_angles = {}
                 
+                # Verify confidence tracking bounds across localized functional chains
                 for j_name, angle in raw_angles.items():
                     if j_name in self.joint_dependencies:
                         is_visible = all(joints[idx].visibility > 0.65 for idx in self.joint_dependencies[j_name])
@@ -79,7 +124,8 @@ class PhysioProcessor(VideoProcessorBase):
                   
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
-def load_master_registry():
+def load_master_registry() -> dict:
+    """Loads the precomputed unified deployment manifest from data cache directories."""
     cache_path = ROOT_DIR / "data" / "master_registry.json"
     if cache_path.exists():
         with open(cache_path, "r") as f:
@@ -87,6 +133,7 @@ def load_master_registry():
     return {}
 
 def render_dashboard_view():
+    """Compiles and renders the historical recovery metrics dashboard using interactive Plotly timelines."""
     st.title("📊 Recovery Analytics Dashboard")
     df = get_analytics_df()
     
@@ -122,6 +169,7 @@ def render_dashboard_view():
     st.dataframe(display_df, use_container_width=True, hide_index=True)
 
 def main():
+    """Main frontend orchestration wrapper initializing application UI view trees and loops."""
     st.set_page_config(page_title="PhysioVision Pro", layout="wide")
 
     registry = load_master_registry()
@@ -141,7 +189,10 @@ def main():
         if "workout_start" not in st.session_state:
             st.session_state.workout_start = datetime.now()
         if "backup_metrics" not in st.session_state:
-            st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready..."}
+            st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready...", "tts_feedback": ""}
+        if "last_speech" not in st.session_state:
+            st.session_state.last_speech = ""
+            st.session_state.last_speech_time = 0.0
 
         st.sidebar.header("Session Settings")
         display_to_key = {data["display_name"]: key for key, data in registry.items()}
@@ -188,19 +239,16 @@ def main():
                     valid_paths.append((int(p.stem), p))
                     
             valid_paths.sort(key=lambda x: x[0])
-            
             target_size = None
             
             for _, path in valid_paths:
                 img = cv2.imread(str(path))
                 if img is not None:
                     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                    
                     if target_size is None:
                         target_size = (img_rgb.shape[1], img_rgb.shape[0])
                     else:
                         img_rgb = cv2.resize(img_rgb, target_size)
-                        
                     step_images.append(img_rgb)
 
         col1, col2, col3 = st.columns([1.5, 1.5, 1])
@@ -227,6 +275,7 @@ def main():
 
         with col3:
             st.markdown("### 3. Live Metrics")
+            audio_ui = st.empty()
             feedback_ui = st.empty()
             rep_ui = st.empty()
             score_ui = st.empty()
@@ -238,6 +287,7 @@ def main():
                 if not webrtc_ctx.video_processor.judge:
                     webrtc_ctx.video_processor.judge = ROMJudge(judge_config)
                 
+                # Active background polling loop driving visual component syncing
                 while webrtc_ctx.state.playing:
                     metrics = webrtc_ctx.video_processor.metrics
                     st.session_state.backup_metrics = metrics
@@ -294,6 +344,7 @@ def main():
                             fade_duration = 0.45 
                             time_in_fade = current_time - st.session_state.fade_start_time
 
+                            # Execute dynamic linear blend to create seamless visual image transitions
                             if time_in_fade < fade_duration and safe_current_idx != safe_prev_idx:
                                 alpha = max(0.0, min(1.0, time_in_fade / fade_duration))
                                 blended = cv2.addWeighted(prev_img, 1.0 - alpha, current_img, alpha, 0)
@@ -301,8 +352,40 @@ def main():
                             else:
                                 guide_ui.image(current_img, channels="RGB", use_container_width=True)
                         else:
-                            guide_ui.info(f"Add sequentially named images (1.jpg, 2.jpg) to `assets/images/{exercise_key}/` to enable the Form Guide.")
+                            guide_ui.info(f"Add images (1.jpg, 2.jpg) to assets/images/{exercise_key}/ to enable the guide.")
 
+                    # --- THE SPEECH ENGINE (Asynchronous Browser Audio Interface) ---
+                    tts_text = metrics.get("tts_feedback", "")
+                    current_time = time.time()
+                    time_since_last_speech = current_time - st.session_state.last_speech_time
+                    
+                    if tts_text and metrics["state"] != "RESTING" and time_since_last_speech > 3.0:
+                        is_correction = "Great form" not in tts_text
+                        should_speak = False
+                        
+                        if tts_text != st.session_state.last_speech or is_correction:
+                            should_speak = True
+                            
+                        if should_speak:
+                            st.session_state.last_speech = tts_text
+                            st.session_state.last_speech_time = current_time
+                            
+                            # Inject non-blocking JavaScript SpeechSynthesis hooks
+                            js_code = f"""
+                                <script>
+                                    var synth = window.parent.speechSynthesis;
+                                    if (!synth.speaking) {{
+                                        var msg = new SpeechSynthesisUtterance("{tts_text}");
+                                        msg.rate = 1.05;
+                                        synth.speak(msg);
+                                    }}
+                                </script>
+                            """
+                            audio_ui.empty() 
+                            with audio_ui:
+                                components.html(js_code, height=0, width=0)
+
+                    # --- UI RENDERING ---
                     feedback_text = metrics.get("feedback", "Ready...")
                     f_bg_color = "#1e4620" if "Great" in feedback_text else "#4a1911" if "Ready" not in feedback_text else "#2b2b2b"
                     f_text_color = "#a5d6a7" if "Great" in feedback_text else "#ffab91" if "Ready" not in feedback_text else "gray"
@@ -344,7 +427,7 @@ def main():
                     if success:
                         st.success(f"Successfully saved {final_metrics['reps']} reps to the database!")
                         st.session_state.workout_start = datetime.now()
-                        st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready..."}
+                        st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready...", "tts_feedback": ""}
                 else:
                     st.warning("Complete at least 1 full rep before saving!")
 

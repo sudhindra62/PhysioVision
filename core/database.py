@@ -1,3 +1,10 @@
+"""
+Database & Persistence Layer Module
+
+Manages relational data storage and historical tracking ledger profiles using SQLite.
+Handles transactional data transformations, relational schema execution, and bridges 
+the persistence layer with frontend Pandas charting components.
+"""
 import sqlite3
 import pandas as pd
 from datetime import datetime
@@ -9,7 +16,14 @@ DATA_DIR.mkdir(exist_ok=True)
 DB_PATH = DATA_DIR / "physiometrics.db"
 
 def init_db():
-    """Initializes the database schema exactly as planned."""
+    """
+    Initializes the local relational database schema.
+
+    Creates two tables if they do not already exist:
+    1. 'workout_sessions': Stores macroscopic session-level metrics (averages, reps, metadata).
+    2. 'rep_details': A child table linked via a foreign key relationship to record 
+       the precise performance score of each isolated repetition.
+    """
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''
@@ -38,8 +52,25 @@ def init_db():
     conn.commit()
     conn.close()
 
-def save_workout(exercise_name: str, target_joint: str, reps: int, avg_score: float, duration: int, rep_scores: list = None):
-    """Inserts a completed session into the database. Prevents 0-rep saves."""
+def save_workout(exercise_name: str, target_joint: str, reps: int, avg_score: float, duration: int, rep_scores: list = None) -> bool:
+    """
+    Inserts a completed exercise session and its granular rep logs transactionally.
+
+    Prevents database pollution by enforcing a structural safeguard that rejects 
+    empty or unexecuted sessions (reps <= 0). Uses atomic operations via parameters 
+    to prevent SQL injection vectors.
+
+    Args:
+        exercise_name (str): The display identity of the exercise executed.
+        target_joint (str): Text string detailing the primary muscle mover joint tracked.
+        reps (int): Total count of valid, locked repetitions completed.
+        avg_score (float): Mean geometric form accuracy across the entire session.
+        duration (int): Runtime duration of the active workout block in seconds.
+        rep_scores (list, optional): Sequential list of float scores tracking individual reps.
+
+    Returns:
+        bool: True if transaction committed successfully, False if session was rejected.
+    """
     if reps <= 0: 
         return False
         
@@ -54,10 +85,10 @@ def save_workout(exercise_name: str, target_joint: str, reps: int, avg_score: fl
         VALUES (?, ?, ?, ?, ?, ?)
     ''', (timestamp, exercise_name, target_joint, reps, avg_score, duration))
     
-    # Get the ID of the session we just inserted
+    # Get the ID of the parent session row we just inserted
     session_id = c.lastrowid 
     
-    # Iterate and save individual rep scores
+    # Iterate and save individual rep scores linked via the session ID
     if rep_scores:
         for idx, score in enumerate(rep_scores):
             c.execute('''
@@ -70,7 +101,16 @@ def save_workout(exercise_name: str, target_joint: str, reps: int, avg_score: fl
     return True
 
 def get_analytics_df() -> pd.DataFrame:
-    """Extracts the entire workout ledger as a Pandas DataFrame for charting."""
+    """
+    Extracts the global workout session ledger sorted chronologically.
+
+    Executes a direct raw query on the parent dataset, loads the relational matrix 
+    directly into memory as a Pandas DataFrame, and parses the text-based column 
+    values into specialized DateTime objects for downstream time-series plotting.
+
+    Returns:
+        pd.DataFrame: A structured data frame mapping historical exercise records.
+    """
     conn = sqlite3.connect(DB_PATH)
     df = pd.read_sql_query("SELECT * FROM workout_sessions ORDER BY timestamp ASC", conn)
     conn.close()
