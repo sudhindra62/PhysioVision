@@ -10,6 +10,7 @@ class ROMJudge:
         self.last_rep_score = 0.0  
         self.total_score_accumulator = 0.0 
         self.average_score = 0.0 
+        self.rep_scores = [] # Tracks individual rep scores
         
         self.smoothed_angles = {}
         self.alpha = 0.35        
@@ -87,6 +88,40 @@ class ROMJudge:
         else:
             return max(0.0, 100.0 - ((avg_error - 15.0) * 3.33))
 
+    def _generate_live_feedback(self, user_angles: dict) -> str:
+        """
+        Passive observer: Generates text prompts without altering any state, 
+        scores, or progress variables. Now includes precise angular offsets.
+        """
+        if not self.golden_trajectory or self.state == "RESTING":
+            return "Ready..."
+
+        def get_avg_primary(frame):
+            vals = [frame.get(j, 0.0) for j in self.primary_joints if j in frame]
+            return sum(vals) / len(vals) if vals else 0.0
+
+        user_target = get_avg_primary(user_angles)
+        best_frame = min(self.golden_trajectory, key=lambda f: abs(get_avg_primary(f) - user_target))
+
+        feedback_list = []
+        for joint in self.primary_joints:
+            u_ang = user_angles.get(joint)
+            g_ang = best_frame.get(joint)
+
+            if u_ang is not None and g_ang is not None:
+                diff = g_ang - u_ang
+                
+                # 15.0 degrees is the tolerance threshold
+                if abs(diff) > 15.0:
+                    direction = "Extend/Open" if diff > 0 else "Bend/Close"
+                    clean_name = joint.replace("_", " ").title()
+                    
+                    # --- NEW: Calculate precise offset for the UI ---
+                    offset = round(abs(diff), 1)
+                    feedback_list.append(f"{direction} {clean_name} ({offset}°)")
+
+        return " | ".join(feedback_list) if feedback_list else "Great form!"
+
     def process_frame(self, raw_angles: dict) -> dict:
         clean_angles = {}
         for joint in self.active_joints:
@@ -158,6 +193,7 @@ class ROMJudge:
                         self.last_rep_score = calculated_rep_score
                         self.total_score_accumulator += self.last_rep_score
                         self.average_score = self.total_score_accumulator / self.reps
+                        self.rep_scores.append(calculated_rep_score)
 
                 # Force reset everything for the next cycle
                 self.state = "RESTING"
@@ -169,10 +205,15 @@ class ROMJudge:
                 self.state = "LIFTING"
                 self.max_achieved_pct = pct
 
+        # --- NEW: Call the passive observer right before exit ---
+        current_feedback = self._generate_live_feedback(clean_angles)
+
         return {
             "reps": self.reps,
             "state": self.state,
             "progress": round(pct * 100, 1), 
             "last_score": self.last_rep_score,
-            "avg_score": round(self.average_score, 1)
+            "avg_score": round(self.average_score, 1),
+            "rep_scores": self.rep_scores,
+            "feedback": current_feedback
         }

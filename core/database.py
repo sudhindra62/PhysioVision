@@ -23,10 +23,22 @@ def init_db():
             duration_seconds INTEGER
         )
     ''')
+    
+    # Create relational table for granular rep data
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS rep_details (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id INTEGER,
+            rep_number INTEGER,
+            rep_score REAL,
+            FOREIGN KEY(session_id) REFERENCES workout_sessions(id)
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 
-def save_workout(exercise_name: str, target_joint: str, reps: int, avg_score: float, duration: int):
+def save_workout(exercise_name: str, target_joint: str, reps: int, avg_score: float, duration: int, rep_scores: list = None):
     """Inserts a completed session into the database. Prevents 0-rep saves."""
     if reps <= 0: 
         return False
@@ -41,6 +53,17 @@ def save_workout(exercise_name: str, target_joint: str, reps: int, avg_score: fl
         (timestamp, exercise_name, target_joint, total_reps, average_score, duration_seconds) 
         VALUES (?, ?, ?, ?, ?, ?)
     ''', (timestamp, exercise_name, target_joint, reps, avg_score, duration))
+    
+    # Get the ID of the session we just inserted
+    session_id = c.lastrowid 
+    
+    # Iterate and save individual rep scores
+    if rep_scores:
+        for idx, score in enumerate(rep_scores):
+            c.execute('''
+                INSERT INTO rep_details (session_id, rep_number, rep_score) 
+                VALUES (?, ?, ?)
+            ''', (session_id, idx + 1, score))
     
     conn.commit()
     conn.close()

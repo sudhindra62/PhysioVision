@@ -40,13 +40,23 @@ class VisionEngine:
         
         result = self.detector.detect(mp_image)
         
-        if not result.pose_landmarks:
+        # Grab BOTH the true 3D space and the 2D screen space
+        if not result.pose_world_landmarks or not result.pose_landmarks:
             return None
             
-        raw_landmarks = result.pose_landmarks[0]
+        raw_world = result.pose_world_landmarks[0]
+        raw_screen = result.pose_landmarks[0]
+        
         joints = [
-            Joint(x=lm.x, y=lm.y, z=lm.z, visibility=lm.visibility) 
-            for lm in raw_landmarks
+            Joint(
+                x=raw_world[i].x, 
+                y=raw_world[i].y, 
+                z=raw_world[i].z, 
+                visibility=raw_world[i].visibility,
+                screen_x=raw_screen[i].x,  # Added for UI drawing
+                screen_y=raw_screen[i].y   # Added for UI drawing
+            ) 
+            for i in range(len(raw_world))
         ]
         
         return joints

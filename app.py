@@ -37,7 +37,7 @@ class PhysioProcessor(VideoProcessorBase):
         self.judge = None
         self.joint_names = []
         
-        self.metrics = {"reps": 0, "state": "INITIALIZING", "progress": 0.0, "last_score": 0.0, "avg_score": 0.0}
+        self.metrics = {"reps": 0, "state": "INITIALIZING", "progress": 0.0, "last_score": 0.0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready..."}
 
         self.joint_dependencies = {
             "left_elbow": [11, 13, 15], "right_elbow": [12, 14, 16],
@@ -49,13 +49,13 @@ class PhysioProcessor(VideoProcessorBase):
         h, w = img.shape[:2]
         for p1, p2 in SKELETON_CONNECTIONS:
             if joints[p1].visibility > 0.5 and joints[p2].visibility > 0.5:
-                pt1 = (int(joints[p1].x * w), int(joints[p1].y * h))
-                pt2 = (int(joints[p2].x * w), int(joints[p2].y * h))
+                pt1 = (int(joints[p1].screen_x * w), int(joints[p1].screen_y * h))
+                pt2 = (int(joints[p2].screen_x * w), int(joints[p2].screen_y * h))
                 cv2.line(img, pt1, pt2, (255, 255, 255), 3)
 
         for idx in [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]:
             if joints[idx].visibility > 0.5:
-                cx, cy = int(joints[idx].x * w), int(joints[idx].y * h)
+                cx, cy = int(joints[idx].screen_x * w), int(joints[idx].screen_y * h)
                 cv2.circle(img, (cx, cy), 6, (0, 255, 0), -1)
 
     def recv(self, frame): 
@@ -77,7 +77,7 @@ class PhysioProcessor(VideoProcessorBase):
                         clean_angles[j_name] = angle
                 
                 self.metrics = self.judge.process_frame(clean_angles)
-                    
+                  
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 # -------------------------------------------------------------------
@@ -153,7 +153,7 @@ def main():
         if "workout_start" not in st.session_state:
             st.session_state.workout_start = datetime.now()
         if "backup_metrics" not in st.session_state:
-            st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0}
+            st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready..."}
 
         st.sidebar.header("Session Settings")
         display_to_key = {data["display_name"]: key for key, data in registry.items()}
@@ -169,8 +169,6 @@ def main():
         active_data = registry[exercise_key]
         physics = active_data["physics"]
         
-        # --- NEW DYNAMIC PATH ROUTING ---
-        # Video is pulled dynamically based on the exercise configuration
         video_path = ROOT_DIR / "assets" / "videos" / active_data["video_file"]
         
         primary_joints = physics.get("primary_joints", ["Unknown"])
@@ -188,9 +186,8 @@ def main():
             st.markdown("### AI Elected Mover:")
             st.info(f"🦾 **{display_joint_text}**")
 
-        # --- DYNAMIC IMAGE LOADER WITH NEW PATHS ---
+        # --- DYNAMIC IMAGE LOADER WITH STANDARDIZED SIZING ---
         step_images = []
-        # Looks specifically inside assets/images/<exercise_name>/
         steps_dir = ROOT_DIR / "assets" / "images" / exercise_key
         
         if steps_dir.exists():
@@ -205,11 +202,19 @@ def main():
                     
             valid_paths.sort(key=lambda x: x[0])
             
+            target_size = None # Anchor dimension to prevent cv2.addWeighted crashes
+            
             for _, path in valid_paths:
                 img = cv2.imread(str(path))
                 if img is not None:
-                    step_images.append(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-        # -----------------------------
+                    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                    
+                    if target_size is None:
+                        target_size = (img_rgb.shape[1], img_rgb.shape[0])
+                    else:
+                        img_rgb = cv2.resize(img_rgb, target_size)
+                        
+                    step_images.append(img_rgb)
 
         col1, col2, col3 = st.columns([1.5, 1.5, 1])
 
@@ -235,6 +240,7 @@ def main():
 
         with col3:
             st.markdown("### 3. Live Metrics")
+            feedback_ui = st.empty()
             rep_ui = st.empty()
             score_ui = st.empty()
             state_ui = st.empty()
@@ -254,15 +260,14 @@ def main():
                         if num_images > 0:
                             if "ui_target_idx" not in st.session_state:
                                 st.session_state.ui_target_idx = 0     
-                                st.session_state.ui_direction = "UP"   
-                                
+                                st.session_state.ui_direction = "UP"
+                                st.session_state.last_transition_time = time.time() 
+                                # Fade Trackers
+                                st.session_state.prev_target_idx = 0
+                                st.session_state.fade_start_time = 0.0
+                             
                             current_progress = metrics['progress'] 
-                            
-                            if num_images > 1:
-                                target_threshold = (st.session_state.ui_target_idx / (num_images - 1)) * 100.0
-                            else:
-                                target_threshold = 0.0
-
+                            target_threshold = (st.session_state.ui_target_idx / (num_images - 1)) * 100.0 if num_images > 1 else 0.0
                             hit_target = False
                             
                             if st.session_state.ui_direction == "UP":
@@ -272,7 +277,18 @@ def main():
                                 if current_progress <= (target_threshold + 15.0):
                                     hit_target = True
 
-                            if hit_target and num_images > 1:
+                            current_time = time.time()
+                            time_since_last = current_time - st.session_state.last_transition_time
+                            
+                            min_wait = 2.0 if st.session_state.ui_target_idx == 0 else 0.5
+
+                            if hit_target and time_since_last > min_wait and num_images > 1:
+                                st.session_state.last_transition_time = current_time
+                                
+                                # Lock in the previous frame and reset the clock before changing indices
+                                st.session_state.prev_target_idx = st.session_state.ui_target_idx
+                                st.session_state.fade_start_time = current_time
+                                
                                 if st.session_state.ui_direction == "UP":
                                     if st.session_state.ui_target_idx < num_images - 1:
                                         st.session_state.ui_target_idx += 1
@@ -286,11 +302,39 @@ def main():
                                         st.session_state.ui_direction = "UP"
                                         st.session_state.ui_target_idx = 1
                             
-                            safe_idx = max(0, min(num_images - 1, st.session_state.ui_target_idx))
-                            guide_ui.image(step_images[safe_idx], channels="RGB", use_container_width=True)
+                            # --- OPENCV ALPHA BLENDING ---
+                            safe_current_idx = max(0, min(num_images - 1, st.session_state.ui_target_idx))
+                            safe_prev_idx = max(0, min(num_images - 1, st.session_state.prev_target_idx))
+
+                            current_img = step_images[safe_current_idx]
+                            prev_img = step_images[safe_prev_idx]
+
+                            fade_duration = 0.45 
+                            time_in_fade = current_time - st.session_state.fade_start_time
+
+                            if time_in_fade < fade_duration and safe_current_idx != safe_prev_idx:
+                                # Calculate linear interpolation factor
+                                alpha = time_in_fade / fade_duration
+                                alpha = max(0.0, min(1.0, alpha)) # Clamp for safety
+                                
+                                blended = cv2.addWeighted(prev_img, 1.0 - alpha, current_img, alpha, 0)
+                                guide_ui.image(blended, channels="RGB", use_container_width=True)
+                            else:
+                                # Transition complete, render static target
+                                guide_ui.image(current_img, channels="RGB", use_container_width=True)
                         else:
-                            # Dynamic Error Message specific to the current exercise
                             guide_ui.info(f"Add sequentially named images (1.jpg, 2.jpg) to `assets/images/{exercise_key}/` to enable the Form Guide.")
+
+                    # --- Render the Feedback ---
+                    feedback_text = metrics.get("feedback", "Ready...")
+                    f_bg_color = "#1e4620" if "Great" in feedback_text else "#4a1911" if "Ready" not in feedback_text else "#2b2b2b"
+                    f_text_color = "#a5d6a7" if "Great" in feedback_text else "#ffab91" if "Ready" not in feedback_text else "gray"
+                    
+                    feedback_ui.markdown(f"""
+                        <div style='background-color: {f_bg_color}; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 10px; border: 1px solid {f_text_color};'>
+                            <h4 style='color: {f_text_color}; margin: 0;'>{feedback_text.upper()}</h4>
+                        </div>
+                    """, unsafe_allow_html=True)
 
                     score_color = "green" if metrics["avg_score"] > 80 else "orange" if metrics["avg_score"] > 40 else "red"
                     state_color = "blue" if metrics["state"] in ["LIFTING", "LOWERING", "PEAK"] else "green" if metrics["state"] == "RESTING" else "gray"
@@ -319,13 +363,14 @@ def main():
                         target_joint=display_joint_text,
                         reps=final_metrics["reps"],
                         avg_score=final_metrics["avg_score"],
-                        duration=duration
+                        duration=duration,
+                        rep_scores=final_metrics.get("rep_scores", [])
                     )
                     
                     if success:
                         st.success(f"Successfully saved {final_metrics['reps']} reps to the database!")
                         st.session_state.workout_start = datetime.now()
-                        st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0}
+                        st.session_state.backup_metrics = {"reps": 0, "avg_score": 0.0, "rep_scores": [], "feedback": "Ready..."}
                 else:
                     st.warning("Complete at least 1 full rep before saving!")
 

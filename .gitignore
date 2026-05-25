@@ -43,3 +43,4 @@ models/
 
 not_track.txt
 temp.txt
+*.txt
