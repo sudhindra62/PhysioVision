@@ -115,8 +115,6 @@ class ROMJudge:
         Returns:
             float: An immediate accuracy score bounded between 0.0 and 100.0.
         """
-        if not self.golden_trajectory: return 100.0
-
         def get_avg_primary(frame):
             vals = [frame.get(j, 0.0) for j in self.primary_joints if j in frame]
             return sum(vals) / len(vals) if vals else 0.0
@@ -139,19 +137,20 @@ class ROMJudge:
         
         avg_error = error_sum / joints_compared
         
-        # Form scoring scale: Errors under 15° are considered passing. 
+        # STRICT SCORING: Errors under 5° pass. 
         # Progressive penalties apply linearly beyond that baseline.
-        if avg_error <= 15.0:
+        if avg_error <= 5.0:
             return 100.0
         else:
-            return max(0.0, 100.0 - ((avg_error - 15.0) * 3.33))
+            # Multiplier increased slightly to punish poor form faster
+            return max(0.0, 100.0 - ((avg_error - 5.0) * 4.0))
 
     def _generate_live_feedback(self, user_angles: dict) -> dict:
         """
         Generates dual-output structural adjustments for the user.
 
         Compares targeted trajectories to isolate deviations. If a primary joint 
-        slips out of tolerance by more than 15°, it constructs explicit directional 
+        slips out of tolerance by more than 5°, it constructs explicit directional 
         instructions.
 
         Args:
@@ -182,7 +181,8 @@ class ROMJudge:
             if u_ang is not None and g_ang is not None:
                 diff = g_ang - u_ang
                 
-                if abs(diff) > 15.0:
+                # STRICT TRIGGER: Fires at > 5.0 degrees of deviation
+                if abs(diff) > 5.0:
                     clean_name = joint.replace("_", " ").title()
                     offset = round(abs(diff), 1)
                     
@@ -195,8 +195,8 @@ class ROMJudge:
                     tts_list.append(f"Please {direction_tts} your {clean_name}")
 
         return {
-            "ui": " | ".join(ui_list) if ui_list else "Great form!",
-            "tts": " and ".join(tts_list) if tts_list else "Great form!"
+            "ui": " | ".join(ui_list) if ui_list else "Flawless form!",
+            "tts": " and ".join(tts_list) if tts_list else "Flawless form!"
         }
 
     def process_frame(self, raw_angles: dict) -> dict:

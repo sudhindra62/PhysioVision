@@ -266,10 +266,14 @@ def main():
 
         with col2:
             st.markdown("### 2. Live Tracking")
+            # --- AUDIO FEEDBACK FIX ---
+            # media_stream_constraints are set to disable the microphone ("audio": False)
+            # This prevents the browser from picking up the TTS output and creating an echo loop.
             webrtc_ctx = webrtc_streamer(
                 key="physio-tracker",
                 video_processor_factory=PhysioProcessor,
                 rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+                media_stream_constraints={"video": True, "audio": False},
                 async_processing=True
             )
 
@@ -387,8 +391,8 @@ def main():
 
                     # --- UI RENDERING ---
                     feedback_text = metrics.get("feedback", "Ready...")
-                    f_bg_color = "#1e4620" if "Great" in feedback_text else "#4a1911" if "Ready" not in feedback_text else "#2b2b2b"
-                    f_text_color = "#a5d6a7" if "Great" in feedback_text else "#ffab91" if "Ready" not in feedback_text else "gray"
+                    f_bg_color = "#1e4620" if "Flawless form!" in feedback_text else "#4a1911" if "Ready" not in feedback_text else "#2b2b2b"
+                    f_text_color = "#a5d6a7" if "Flawless form!" in feedback_text else "#ffab91" if "Ready" not in feedback_text else "gray"
                     
                     feedback_ui.markdown(f"""
                         <div style='background-color: {f_bg_color}; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 10px; border: 1px solid {f_text_color};'>
