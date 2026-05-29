@@ -27,9 +27,7 @@ class ROMJudge:
         to natively support both pushing and pulling anatomical patterns.
 
         Args:
-            config (dict): Configuration dictionary loaded from the master registry, 
-                           containing 'primary_joints', 'all_joints' specifications, 
-                           and the 'golden_trajectory' array.
+            config (dict): Configuration dictionary loaded from the master registry.
         """
         self.config = config
         self.state = "RESTING"
@@ -51,10 +49,12 @@ class ROMJudge:
         self.max_achieved_pct = 0.0
         self.min_achieved_pct = 1.0
         
-        # --- STRICT CYCLE LOCKS ---
-        # Hysteresis bounds to prevent state flickering at boundary limits
-        self.BOTTOM_THRESHOLD = 0.25 
-        self.TOP_THRESHOLD = 0.80    
+        # --- STRICT CYCLE LOCKS (UPDATED FOR 2D FORESHORTENING) ---
+        # Thresholds adapted to account for 2D camera Z-axis compression
+        self.BOTTOM_THRESHOLD = 0.20  # Allows resting at 20% of textbook limit
+        self.TOP_THRESHOLD = 0.45     # Registers peak at 45% (compensates for missing depth)
+        self.HYSTERESIS = 0.10        # Required drop before changing direction
+        
         self.valid_peak_reached = False 
         self.current_rep_errors = []
 
@@ -67,25 +67,13 @@ class ROMJudge:
             base_angle = min_ang
             if self.golden_trajectory:
                 start_angle = self.golden_trajectory[0].get(joint, min_ang)
-                # If the initial frame is closer to max_angle, assume reverse motion (pulling)
                 if abs(start_angle - max_ang) < abs(start_angle - min_ang):
                     base_angle = max_ang
                     
             self.joint_baselines[joint] = base_angle
 
     def get_completion_percentage(self, clean_angles: dict) -> float:
-        """
-        Calculates the normalized progress of the active repetition.
-
-        Maps the current geometric coordinates against the pre-calibrated baseline range 
-        of motion, bounding the final calculation mathematically between 0.0 and 1.0.
-
-        Args:
-            clean_angles (dict): Smoothed dictionary mapping joint names to float degrees.
-
-        Returns:
-            float: A normalized value (0.0 to 1.0) indicating execution completion.
-        """
+        """Calculates the normalized progress of the active repetition."""
         pcts = []
         for joint in self.primary_joints:
             min_ang = self.config["all_joints"][joint]["min_angle"]
@@ -102,19 +90,7 @@ class ROMJudge:
         return min(pcts) if pcts else 0.0
 
     def _calculate_frame_accuracy(self, user_angles: dict) -> float:
-        """
-        Evaluates immediate posture precision against the reference model.
-
-        Employs a nearest-neighbor spatial search to find the frame within the 
-        golden trajectory that closest matches the user's current progress percentage. 
-        It then calculates the average joint error deviation across all active tracking nodes.
-
-        Args:
-            user_angles (dict): Current smoothed angles of the user.
-
-        Returns:
-            float: An immediate accuracy score bounded between 0.0 and 100.0.
-        """
+        """Evaluates immediate posture precision against the reference model."""
         def get_avg_primary(frame):
             vals = [frame.get(j, 0.0) for j in self.primary_joints if j in frame]
             return sum(vals) / len(vals) if vals else 0.0
@@ -137,30 +113,13 @@ class ROMJudge:
         
         avg_error = error_sum / joints_compared
         
-        # STRICT SCORING: Errors under 5° pass. 
-        # Progressive penalties apply linearly beyond that baseline.
         if avg_error <= 5.0:
             return 100.0
         else:
-            # Multiplier increased slightly to punish poor form faster
             return max(0.0, 100.0 - ((avg_error - 5.0) * 4.0))
 
     def _generate_live_feedback(self, user_angles: dict) -> dict:
-        """
-        Generates dual-output structural adjustments for the user.
-
-        Compares targeted trajectories to isolate deviations. If a primary joint 
-        slips out of tolerance by more than 5°, it constructs explicit directional 
-        instructions.
-
-        Args:
-            user_angles (dict): Current smoothed angles of the user.
-
-        Returns:
-            dict: A payload containing two distinct string properties:
-                  - 'ui': Technical string with angles (e.g., 'Extend Elbow (18°)')
-                  - 'tts': Conversational string (e.g., 'Please extend your left elbow')
-        """
+        """Generates dual-output structural adjustments for the user."""
         if not self.golden_trajectory or self.state == "RESTING":
             return {"ui": "Ready...", "tts": ""}
 
@@ -181,16 +140,13 @@ class ROMJudge:
             if u_ang is not None and g_ang is not None:
                 diff = g_ang - u_ang
                 
-                # STRICT TRIGGER: Fires at > 5.0 degrees of deviation
                 if abs(diff) > 5.0:
                     clean_name = joint.replace("_", " ").title()
                     offset = round(abs(diff), 1)
                     
-                    # 1. UI String (Data-heavy)
                     direction_ui = "Extend/Open" if diff > 0 else "Bend/Close"
                     ui_list.append(f"{direction_ui} {clean_name} ({offset}°)")
                     
-                    # 2. TTS String (Natural phrasing)
                     direction_tts = "extend" if diff > 0 else "bend"
                     tts_list.append(f"Please {direction_tts} your {clean_name}")
 
@@ -200,29 +156,13 @@ class ROMJudge:
         }
 
     def process_frame(self, raw_angles: dict) -> dict:
-        """
-        The master evaluation cycle triggered for every incoming video frame.
-        
-        Performs four serial processes:
-        1. Noise Filtering: Applies Exponential Moving Average (EMA) smoothing to input angles.
-        2. Plane Verification: Evaluates the Transverse Plane Angle to ensure alignment.
-        3. Finite State Machine Update: Drives the structural lifecycle loop.
-        4. Performance Valuation: scores completed repetitions using a weighted blend 
-           of extension depth (70%) and multi-joint accuracy profiles (30%).
-
-        Args:
-            raw_angles (dict): Unfiltered geometric dictionary from the math layer.
-
-        Returns:
-            dict: High-density state payload required by frontend rendering layers.
-        """
+        """The master evaluation cycle triggered for every incoming video frame."""
         clean_angles = {}
         for joint, angle in raw_angles.items():
             if angle is not None:
                 if joint not in self.smoothed_angles:
                     self.smoothed_angles[joint] = angle
                 else:
-                    # Exponential Moving Average filter execution
                     self.smoothed_angles[joint] = (self.alpha * angle) + ((1.0 - self.alpha) * self.smoothed_angles[joint])
             clean_angles[joint] = self.smoothed_angles.get(joint, 0.0)
 
@@ -250,8 +190,8 @@ class ROMJudge:
 
             if user_plane is not None and golden_plane is not None:
                 plane_diff = user_plane - golden_plane
-                # 25 degree operational window allowed before gatekeeper activates
-                if abs(plane_diff) > 25.0: 
+                # Increased to 40.0 to account for 2D camera spatial fluctuation
+                if abs(plane_diff) > 40.0: 
                     plane_is_valid = False
                     action = "FORWARD" if plane_diff > 0 else "SIDEWAYS"
                     part = "ARM" if "shoulder" in base_joint else "LEG"
@@ -274,13 +214,11 @@ class ROMJudge:
             self.current_rep_errors.append(frame_acc)
 
             if pct >= self.TOP_THRESHOLD:
-                # Absolute validation lock: Can only achieve PEAK if moving inside the valid 3D plane
                 if plane_is_valid:
                     self.state = "PEAK"
                     self.valid_peak_reached = True 
 
-            elif pct < self.max_achieved_pct - 0.15:
-                # Hysteresis breach indicates premature descent
+            elif pct < self.max_achieved_pct - self.HYSTERESIS:
                 self.state = "LOWERING"
                 self.min_achieved_pct = pct
 
@@ -288,7 +226,7 @@ class ROMJudge:
             self.max_achieved_pct = max(self.max_achieved_pct, pct)
             self.current_rep_errors.append(frame_acc)
 
-            if pct < self.max_achieved_pct - 0.15:
+            if pct < self.max_achieved_pct - self.HYSTERESIS:
                 self.state = "LOWERING"
                 self.min_achieved_pct = pct
 
@@ -297,18 +235,16 @@ class ROMJudge:
             self.current_rep_errors.append(frame_acc)
 
             is_resting = pct <= self.BOTTOM_THRESHOLD
-            is_bouncing = pct > self.min_achieved_pct + 0.15 # Hysteresis recovery flag
+            is_bouncing = pct > self.min_achieved_pct + self.HYSTERESIS
 
             if is_resting:
-                # Repetition complete boundary reached
                 if self.valid_peak_reached:
-                    # Weighting: 70% Extension Completeness, 30% Continuous Path Precision
-                    base_score = min(100.0, ((self.max_achieved_pct - self.min_achieved_pct) / 0.80) * 100.0)
+                    # Dynamically scale score against the Top Threshold to account for 2D bounds
+                    base_score = min(100.0, ((self.max_achieved_pct - self.min_achieved_pct) / self.TOP_THRESHOLD) * 100.0)
                     form_accuracy = sum(self.current_rep_errors) / len(self.current_rep_errors) if self.current_rep_errors else 100.0
                     
                     calculated_rep_score = round((base_score * 0.7) + (form_accuracy * 0.3), 1)
                     
-                    # Filter out low-grade partial movements from the permanent storage layer
                     if calculated_rep_score >= 50.0:
                         self.reps += 1
                         self.last_rep_score = calculated_rep_score
@@ -324,22 +260,23 @@ class ROMJudge:
                 self.state = "LIFTING"
                 self.max_achieved_pct = pct
 
-        # Generate dual-output feedback configurations
         feedback_data = self._generate_live_feedback(clean_angles)
         current_ui_feedback = feedback_data["ui"]
         current_tts_feedback = feedback_data["tts"]
 
-        # Override system strings with priority alerts if the 3D plane gatekeeper fires
         if not plane_is_valid and pct > self.BOTTOM_THRESHOLD:
             current_ui_feedback = plane_error_message
             action_tts = "forward" if "FORWARD" in plane_error_message else "to the side"
             part_tts = "arm" if "ARM" in plane_error_message else "leg"
             current_tts_feedback = f"Bring your {part_tts} {action_tts}"
 
+        # Scale UI progress so it fills to 100% visually when hitting the 2D TOP_THRESHOLD
+        ui_progress = min(100.0, (pct / self.TOP_THRESHOLD) * 100.0)
+
         return {
             "reps": self.reps,
             "state": self.state,
-            "progress": round(pct * 100, 1), 
+            "progress": round(ui_progress, 1), 
             "last_score": self.last_rep_score,
             "avg_score": round(self.average_score, 1),
             "rep_scores": self.rep_scores,
