@@ -17,6 +17,8 @@ from pathlib import Path
 import pandas as pd
 import plotly.express as px
 from datetime import datetime
+import subprocess
+import sys
 
 from core.vision import VisionEngine
 from core.geometry import PhysioGeometry
@@ -38,7 +40,6 @@ SKELETON_CONNECTIONS = [
 class PhysioProcessor(VideoProcessorBase):
     """
     Asynchronous frame processing class inherited from streamlit-webrtc.
-    
     Acts as a non-blocking background thread worker that handles camera frame capture, 
     routes image bytes through computer vision and mathematical modules, paints 
     the annotated skeletal feedback matrix, and exposes a shared memory dictionary 
@@ -71,7 +72,6 @@ class PhysioProcessor(VideoProcessorBase):
     def draw_skeleton(self, img, joints):
         """
         Paints the high-visibility visual feedback skeleton directly onto the video array matrix.
-
         Args:
             img (np.ndarray): The target raw BGR image array.
             joints (list): Collection of active landmarks containing screen space mapping coordinates.
@@ -91,14 +91,11 @@ class PhysioProcessor(VideoProcessorBase):
     def recv(self, frame) -> av.VideoFrame:
         """
         Asynchronous frame processing callback executed for every incoming WebRTC packet.
-
         Extracts the uncompressed image matrix, isolates skeletal landmarks, extracts 
         geometric coordinates while checking visibility bounds to ignore occluded fields, 
         and updates the shared reference metrics structure.
-
         Args:
             frame (av.VideoFrame): Immediate raw video frame from the client web browser.
-
         Returns:
             av.VideoFrame: The annotated frame object packed back into WebRTC format specifications.
         """
@@ -168,6 +165,62 @@ def render_dashboard_view():
     
     st.dataframe(display_df, use_container_width=True, hide_index=True)
 
+def render_upload_view():
+    """Renders the UI for uploading and calibrating new custom exercises."""
+    st.title("📤 Train New Exercise")
+    st.markdown("Upload a single-rep reference video to train the CV model on a new movement trajectory.")
+
+    # 1. Capture user inputs
+    exercise_name = st.text_input(
+        "Exercise Name (e.g., overhead_press):", 
+        help="Use lowercase letters and underscores."
+    ).strip().lower().replace(" ", "_")
+    
+    uploaded_file = st.file_uploader("Choose a reference video", type=["mp4"])
+
+    if st.button("Process & Compile Registry", type="primary", use_container_width=True):
+        if not exercise_name or not uploaded_file:
+            st.error("⚠️ Please provide both a valid name and a video file.")
+            return
+
+        # 2. Save the video to the target assets directory
+        video_filename = f"{exercise_name}.mp4"
+        save_path = ROOT_DIR / "assets" / "videos" / video_filename
+
+        with open(save_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        st.success(f"💾 Video successfully saved to {save_path.relative_to(ROOT_DIR)}")
+
+        # 3. Trigger the Extractor Script
+        with st.spinner("🧠 Step 1/2: Extracting spatial 3D trajectories (this may take a moment)..."):
+            extractor_script = str(ROOT_DIR / "scripts" / "extractor.py")
+            ext_result = subprocess.run(
+                [sys.executable, "-X", "utf8", extractor_script], # Added -X utf8
+                capture_output=True, text=True, encoding="utf-8"  # Added encoding
+            )
+            
+            if ext_result.returncode != 0:
+                st.error(f"❌ Extractor failed:\n{ext_result.stderr}")
+                return
+            st.success("✅ Spatial trajectory extraction complete!")
+
+        # 4. Trigger the Precompute/Registry Compiler Script
+        with st.spinner("⚙️ Step 2/2: Compiling mathematical registry and DTW baselines..."):
+            precompute_script = str(ROOT_DIR / "scripts" / "precompute_all.py")
+            pre_result = subprocess.run(
+                [sys.executable, "-X", "utf8", precompute_script], # Added -X utf8
+                capture_output=True, text=True, encoding="utf-8"   # Added encoding
+            )
+            
+            if pre_result.returncode != 0:
+                st.error(f"❌ Precomputation failed:\n{pre_result.stderr}")
+                return
+            st.success("✅ Master registry updated successfully!")
+
+        # 5. Clear caches and prompt restart
+        st.balloons()
+        st.info("🎉 Training complete! The system has mapped the new physics limits. Refresh the page to load the new registry in the Live Tracker.")
+
 def main():
     """Main frontend orchestration wrapper initializing application UI view trees and loops."""
     st.set_page_config(page_title="PhysioVision Pro", layout="wide")
@@ -178,9 +231,12 @@ def main():
         return
 
     st.sidebar.title("Navigation")
-    app_mode = st.sidebar.radio("Go to:", ["Live Tracker", "Analytics Dashboard"])
+    app_mode = st.sidebar.radio("Go to:", ["Live Tracker", "Analytics Dashboard", "Upload Custom Exercise"])
 
-    if app_mode == "Analytics Dashboard":
+    if app_mode == "Upload Custom Exercise":
+        render_upload_view()
+
+    elif app_mode == "Analytics Dashboard":
         render_dashboard_view()
 
     elif app_mode == "Live Tracker":
@@ -284,13 +340,13 @@ def main():
             rep_ui = st.empty()
             score_ui = st.empty()
             state_ui = st.empty()
-            
+             
             if webrtc_ctx.state.playing and webrtc_ctx.video_processor:
                 webrtc_ctx.video_processor.joint_names = primary_joints
                 
                 if not webrtc_ctx.video_processor.judge:
                     webrtc_ctx.video_processor.judge = ROMJudge(judge_config)
-                
+                 
                 # Active background polling loop driving visual component syncing
                 while webrtc_ctx.state.playing:
                     metrics = webrtc_ctx.video_processor.metrics
