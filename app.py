@@ -218,7 +218,7 @@ def render_upload_view():
             st.success("✅ Master registry updated successfully!")
 
         # 5. Clear caches and prompt restart
-        st.balloons()
+        # st.balloons()
         st.info("🎉 Training complete! The system has mapped the new physics limits. Refresh the page to load the new registry in the Live Tracker.")
 
 def main():
