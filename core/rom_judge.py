@@ -12,7 +12,6 @@ from typing import Dict, List
 class ROMJudge:
     """
     Manages the real-time lifecycle of physical therapy and fitness repetitions.
-    
     Operates as a deterministic finite state machine (RESTING -> LIFTING -> PEAK -> LOWERING)
     backed by hysteresis thresholds to eliminate false positives caused by camera 
     shaking, spatial jitter, or micro-bounces at structural boundaries.
@@ -21,11 +20,10 @@ class ROMJudge:
     def __init__(self, config: dict):
         """
         Initializes the state machine, smoothing profiles, and historic accumulators.
-
         Performs dynamic baseline calibration to determine whether an exercise start 
         state is at a minimum extension or maximum flexion angle, allowing the system 
         to natively support both pushing and pulling anatomical patterns.
-
+        
         Args:
             config (dict): Configuration dictionary loaded from the master registry.
         """
@@ -58,19 +56,8 @@ class ROMJudge:
         self.valid_peak_reached = False 
         self.current_rep_errors = []
 
-        # --- DYNAMIC BASELINE CALIBRATION ---
-        self.joint_baselines = {}
-        for joint in self.primary_joints:
-            min_ang = self.config["all_joints"][joint]["min_angle"]
-            max_ang = self.config["all_joints"][joint]["max_angle"]
-            
-            base_angle = min_ang
-            if self.golden_trajectory:
-                start_angle = self.golden_trajectory[0].get(joint, min_ang)
-                if abs(start_angle - max_ang) < abs(start_angle - min_ang):
-                    base_angle = max_ang
-                    
-            self.joint_baselines[joint] = base_angle
+        # --- We prepare a blank slate for live posture calibration ---
+        self.live_baselines = None
 
     def get_completion_percentage(self, clean_angles: dict) -> float:
         """Calculates the normalized progress of the active repetition."""
@@ -78,13 +65,19 @@ class ROMJudge:
         for joint in self.primary_joints:
             min_ang = self.config["all_joints"][joint]["min_angle"]
             max_ang = self.config["all_joints"][joint]["max_angle"]
-            rom_range = abs(max_ang - min_ang) if abs(max_ang - min_ang) > 0 else 1
             
-            base_angle = self.joint_baselines.get(joint, min_ang)
+            # Use the live posture captured when you started the tracker
+            base_angle = self.live_baselines.get(joint, min_ang) if self.live_baselines else min_ang
             current_angle = clean_angles.get(joint, base_angle)
             
+            # Calculate max possible movement from where you are sitting
+            max_possible_movement = max(abs(max_ang - base_angle), abs(min_ang - base_angle))
+            if max_possible_movement < 10.0: # Safeguard against tiny ranges
+                max_possible_movement = 10.0
+                
             moved = abs(current_angle - base_angle)
-            pct = moved / rom_range
+            
+            pct = moved / max_possible_movement
             pcts.append(max(0.0, min(1.0, pct)))
             
         return min(pcts) if pcts else 0.0
@@ -165,6 +158,19 @@ class ROMJudge:
                 else:
                     self.smoothed_angles[joint] = (self.alpha * angle) + ((1.0 - self.alpha) * self.smoothed_angles[joint])
             clean_angles[joint] = self.smoothed_angles.get(joint, 0.0)
+
+        # --- LIVE POSTURE CALIBRATION ---
+        # Captures your exact resting posture on the first valid frame
+        if self.live_baselines is None:
+            if all(clean_angles.get(j, 0.0) > 0 for j in self.primary_joints):
+                self.live_baselines = {j: clean_angles[j] for j in self.primary_joints}
+            else:
+                # Wait for the camera to find you before starting
+                return {
+                    "reps": self.reps, "state": "CALIBRATING", "progress": 0.0, 
+                    "last_score": 0.0, "avg_score": 0.0, "rep_scores": [], 
+                    "feedback": "Get in starting position...", "tts_feedback": ""
+                }
 
         pct = self.get_completion_percentage(clean_angles)
         frame_acc = self._calculate_frame_accuracy(clean_angles)

@@ -11,7 +11,14 @@
             "left_shoulder_plane": 105.54260856963957,
             "right_shoulder_plane": 95.68198736141031,
             "left_hip_plane": 90.68205141204514,
-            "right_hip_plane": 99.28324005928866
+            "right_hip_plane": 99.28324005928866,
+            "neck": 84.1300494415059,
+            "left_hip": 123.20813257109589,
+            "right_hip": 129.54294488736448,
+            "left_ankle": 129.62169487410708,
+            "right_ankle": 121.99549734707722,
+            "left_wrist": 99.38776246160829,
+            "right_wrist": 95.33084441061693
         }
     },
     {
@@ -26,7 +33,14 @@
             "left_shoulder_plane": 107.0902511867588,
             "right_shoulder_plane": 93.89514106733743,
             "left_hip_plane": 92.20250654230766,
-            "right_hip_plane": 96.76914156722277
+            "right_hip_plane": 96.76914156722277,
+            "neck": 82.30684231338125,
+            "left_hip": 127.24867451966954,
+            "right_hip": 129.14380783783338,
+            "left_ankle": 109.44491492971102,
+            "right_ankle": 116.00426093248129,
+            "left_wrist": 98.41757021832886,
+            "right_wrist": 95.99400341564491
         }
     },
     {
@@ -41,7 +55,14 @@
             "left_shoulder_plane": 107.54448047319227,
             "right_shoulder_plane": 96.23516534546903,
             "left_hip_plane": 88.2352125289231,
-            "right_hip_plane": 95.5227533614411
+            "right_hip_plane": 95.5227533614411,
+            "neck": 84.34918876204894,
+            "left_hip": 133.117437039746,
+            "right_hip": 129.98526887048064,
+            "left_ankle": 95.47388003539912,
+            "right_ankle": 109.517418756593,
+            "left_wrist": 100.46750912007234,
+            "right_wrist": 92.64412081308862
         }
     },
     {
@@ -56,7 +77,14 @@
             "left_shoulder_plane": 106.55562769654178,
             "right_shoulder_plane": 93.50113684093051,
             "left_hip_plane": 86.77419412778634,
-            "right_hip_plane": 100.62256626227055
+            "right_hip_plane": 100.62256626227055,
+            "neck": 85.53168319554986,
+            "left_hip": 136.72171118524682,
+            "right_hip": 134.81099767491037,
+            "left_ankle": 95.24263080675134,
+            "right_ankle": 108.84105450901494,
+            "left_wrist": 98.41146630423927,
+            "right_wrist": 96.5667835413195
         }
     },
     {
@@ -71,7 +99,14 @@
             "left_shoulder_plane": 106.63896779729983,
             "right_shoulder_plane": 95.18654430436993,
             "left_hip_plane": 93.36575032681243,
-            "right_hip_plane": 103.44356661823589
+            "right_hip_plane": 103.44356661823589,
+            "neck": 86.57471337993607,
+            "left_hip": 138.03516576863805,
+            "right_hip": 122.28625593846147,
+            "left_ankle": 108.57615866558517,
+            "right_ankle": 108.84955937687126,
+            "left_wrist": 111.522248861681,
+            "right_wrist": 111.79854392663665
         }
     },
     {
@@ -86,7 +121,14 @@
             "left_shoulder_plane": 106.29583591592126,
             "right_shoulder_plane": 99.48124863466222,
             "left_hip_plane": 99.27468773918241,
-            "right_hip_plane": 99.32477127736314
+            "right_hip_plane": 99.32477127736314,
+            "neck": 87.68252174056137,
+            "left_hip": 135.18943200342937,
+            "right_hip": 84.11511946402459,
+            "left_ankle": 119.64346569355712,
+            "right_ankle": 123.55817886351176,
+            "left_wrist": 120.31759464632003,
+            "right_wrist": 122.35007949345085
         }
     },
     {
@@ -101,7 +143,14 @@
             "left_shoulder_plane": 106.22742919369935,
             "right_shoulder_plane": 96.78214092759552,
             "left_hip_plane": 101.10669482828783,
-            "right_hip_plane": 114.64410425963587
+            "right_hip_plane": 114.64410425963587,
+            "neck": 84.65041786637163,
+            "left_hip": 138.7205902659947,
+            "right_hip": 76.578352086693,
+            "left_ankle": 113.36039458268102,
+            "right_ankle": 123.6601363358269,
+            "left_wrist": 114.9708000691531,
+            "right_wrist": 113.68402390491282
         }
     },
     {
@@ -116,7 +165,14 @@
             "left_shoulder_plane": 104.23091299878737,
             "right_shoulder_plane": 97.40783271216755,
             "left_hip_plane": 101.84967759488502,
-            "right_hip_plane": 114.81381251737491
+            "right_hip_plane": 114.81381251737491,
+            "neck": 83.93090392310586,
+            "left_hip": 140.10763852532125,
+            "right_hip": 55.27313909389901,
+            "left_ankle": 121.57311481696091,
+            "right_ankle": 129.6283318753632,
+            "left_wrist": 115.09269128900576,
+            "right_wrist": 113.68392535909956
         }
     },
     {
@@ -131,7 +187,14 @@
             "left_shoulder_plane": 105.52163393997616,
             "right_shoulder_plane": 94.8173611646076,
             "left_hip_plane": 105.05980665828521,
-            "right_hip_plane": 119.21202548438994
+            "right_hip_plane": 119.21202548438994,
+            "neck": 83.5110305341668,
+            "left_hip": 135.21410606550631,
+            "right_hip": 75.85624568579502,
+            "left_ankle": 110.19591357259151,
+            "right_ankle": 119.14910489565752,
+            "left_wrist": 115.8985758800529,
+            "right_wrist": 112.36722028648497
         }
     },
     {
@@ -146,7 +209,14 @@
             "left_shoulder_plane": 106.16108144798014,
             "right_shoulder_plane": 96.0609079150432,
             "left_hip_plane": 104.77832011798003,
-            "right_hip_plane": 114.79199005744205
+            "right_hip_plane": 114.79199005744205,
+            "neck": 82.5509464371676,
+            "left_hip": 135.12073752344466,
+            "right_hip": 63.62044166347798,
+            "left_ankle": 110.3510245176733,
+            "right_ankle": 115.42181442936175,
+            "left_wrist": 113.38429446239377,
+            "right_wrist": 111.77161398662595
         }
     },
     {
@@ -161,7 +231,14 @@
             "left_shoulder_plane": 105.30915700575376,
             "right_shoulder_plane": 96.37570045829466,
             "left_hip_plane": 99.27606541481568,
-            "right_hip_plane": 110.2698937216385
+            "right_hip_plane": 110.2698937216385,
+            "neck": 84.79797143771374,
+            "left_hip": 134.05969112232307,
+            "right_hip": 83.08620890312963,
+            "left_ankle": 112.39995996614924,
+            "right_ankle": 113.89047471485377,
+            "left_wrist": 115.7216672944806,
+            "right_wrist": 112.95201008442305
         }
     },
     {
@@ -176,7 +253,14 @@
             "left_shoulder_plane": 106.01858146172718,
             "right_shoulder_plane": 94.66789635716779,
             "left_hip_plane": 87.08264520850256,
-            "right_hip_plane": 98.56603462573632
+            "right_hip_plane": 98.56603462573632,
+            "neck": 84.52774990115013,
+            "left_hip": 140.2665459602045,
+            "right_hip": 140.87104202961402,
+            "left_ankle": 101.41630346440833,
+            "right_ankle": 110.71775819070758,
+            "left_wrist": 106.159920702118,
+            "right_wrist": 105.2885248827385
         }
     },
     {
@@ -191,7 +275,14 @@
             "left_shoulder_plane": 106.14156116100536,
             "right_shoulder_plane": 94.47379892267901,
             "left_hip_plane": 89.31413222134695,
-            "right_hip_plane": 99.22707581611967
+            "right_hip_plane": 99.22707581611967,
+            "neck": 85.16459219111509,
+            "left_hip": 137.05919803299335,
+            "right_hip": 136.99108484246668,
+            "left_ankle": 97.80582060078153,
+            "right_ankle": 108.25156329656623,
+            "left_wrist": 108.9020865558852,
+            "right_wrist": 109.20312110507665
         }
     },
     {
@@ -206,7 +297,14 @@
             "left_shoulder_plane": 105.61824521583006,
             "right_shoulder_plane": 95.52259997066368,
             "left_hip_plane": 87.87950587586133,
-            "right_hip_plane": 99.08137020800892
+            "right_hip_plane": 99.08137020800892,
+            "neck": 83.6847278281546,
+            "left_hip": 131.90108797944998,
+            "right_hip": 130.63664958589632,
+            "left_ankle": 102.25386989735348,
+            "right_ankle": 111.51816397911638,
+            "left_wrist": 106.201571766587,
+            "right_wrist": 105.01011890635858
         }
     },
     {
@@ -221,7 +319,14 @@
             "left_shoulder_plane": 106.47019938859965,
             "right_shoulder_plane": 91.20031462600132,
             "left_hip_plane": 88.58244522444129,
-            "right_hip_plane": 95.58637388814874
+            "right_hip_plane": 95.58637388814874,
+            "neck": 83.29531868874034,
+            "left_hip": 132.66209578932023,
+            "right_hip": 133.81575037474332,
+            "left_ankle": 110.20631660881773,
+            "right_ankle": 116.09408473550434,
+            "left_wrist": 103.63943285432303,
+            "right_wrist": 103.63763672861548
         }
     },
     {
@@ -236,7 +341,14 @@
             "left_shoulder_plane": 103.63901967327946,
             "right_shoulder_plane": 93.92098336669146,
             "left_hip_plane": 86.61479317581288,
-            "right_hip_plane": 97.67567553274256
+            "right_hip_plane": 97.67567553274256,
+            "neck": 84.90472735705902,
+            "left_hip": 134.2848078674337,
+            "right_hip": 132.979101534192,
+            "left_ankle": 107.72516005752985,
+            "right_ankle": 114.93923023195389,
+            "left_wrist": 107.19836347102023,
+            "right_wrist": 105.53078822882597
         }
     },
     {
@@ -251,7 +363,14 @@
             "left_shoulder_plane": 105.64477855355265,
             "right_shoulder_plane": 94.1376727342595,
             "left_hip_plane": 90.39371020531561,
-            "right_hip_plane": 103.90227730604849
+            "right_hip_plane": 103.90227730604849,
+            "neck": 85.26372710829897,
+            "left_hip": 113.15086631778972,
+            "right_hip": 137.55168333762313,
+            "left_ankle": 144.4202807701414,
+            "right_ankle": 126.83726482925515,
+            "left_wrist": 100.66735030578788,
+            "right_wrist": 101.44716390755559
         }
     },
     {
@@ -266,7 +385,14 @@
             "left_shoulder_plane": 105.8075332248494,
             "right_shoulder_plane": 91.49048916171691,
             "left_hip_plane": 95.30644864266263,
-            "right_hip_plane": 107.29098585458593
+            "right_hip_plane": 107.29098585458593,
+            "neck": 85.28435453644121,
+            "left_hip": 98.56811954123415,
+            "right_hip": 145.02710854527388,
+            "left_ankle": 143.867931363324,
+            "right_ankle": 125.30791113771517,
+            "left_wrist": 110.55592339037159,
+            "right_wrist": 110.35878360810145
         }
     },
     {
@@ -281,7 +407,14 @@
             "left_shoulder_plane": 106.2799418794548,
             "right_shoulder_plane": 91.48192412999511,
             "left_hip_plane": 98.85522226399985,
-            "right_hip_plane": 107.22075982569983
+            "right_hip_plane": 107.22075982569983,
+            "neck": 86.57782808754202,
+            "left_hip": 92.09162201041153,
+            "right_hip": 144.72899519578897,
+            "left_ankle": 147.44385199588797,
+            "right_ankle": 126.57975018207884,
+            "left_wrist": 110.82267846468889,
+            "right_wrist": 110.48368316136616
         }
     },
     {
@@ -296,7 +429,14 @@
             "left_shoulder_plane": 107.28745813615244,
             "right_shoulder_plane": 94.19749252755472,
             "left_hip_plane": 103.60643676617337,
-            "right_hip_plane": 112.11998060962367
+            "right_hip_plane": 112.11998060962367,
+            "neck": 88.10936921022949,
+            "left_hip": 70.19135414848714,
+            "right_hip": 148.46398281801322,
+            "left_ankle": 152.61345824648058,
+            "right_ankle": 128.71439070641446,
+            "left_wrist": 113.77886604854243,
+            "right_wrist": 110.3012588889605
         }
     },
     {
@@ -311,7 +451,14 @@
             "left_shoulder_plane": 107.04590444774954,
             "right_shoulder_plane": 93.73524509419948,
             "left_hip_plane": 100.84676059393783,
-            "right_hip_plane": 109.93519443554486
+            "right_hip_plane": 109.93519443554486,
+            "neck": 86.46611732263898,
+            "left_hip": 71.15716036908431,
+            "right_hip": 153.37107290772448,
+            "left_ankle": 155.08858607397113,
+            "right_ankle": 133.5674256795712,
+            "left_wrist": 119.30054368636131,
+            "right_wrist": 114.66580319532927
         }
     },
     {
@@ -326,7 +473,14 @@
             "left_shoulder_plane": 107.81229127436639,
             "right_shoulder_plane": 94.96167302582754,
             "left_hip_plane": 102.32551331455873,
-            "right_hip_plane": 111.74643351536773
+            "right_hip_plane": 111.74643351536773,
+            "neck": 87.94438406668044,
+            "left_hip": 68.13751623659293,
+            "right_hip": 152.83288776389304,
+            "left_ankle": 152.60489104860147,
+            "right_ankle": 133.56628420129138,
+            "left_wrist": 118.05571201948179,
+            "right_wrist": 117.84419757538853
         }
     },
     {
@@ -341,7 +495,14 @@
             "left_shoulder_plane": 106.49453516052996,
             "right_shoulder_plane": 92.39345582847743,
             "left_hip_plane": 100.23828804598587,
-            "right_hip_plane": 111.19333179650032
+            "right_hip_plane": 111.19333179650032,
+            "neck": 86.73816762713325,
+            "left_hip": 70.1629292443812,
+            "right_hip": 152.8872345127456,
+            "left_ankle": 150.4571230987623,
+            "right_ankle": 128.66141502373932,
+            "left_wrist": 113.96713971772198,
+            "right_wrist": 113.39396731728054
         }
     },
     {
@@ -356,7 +517,14 @@
             "left_shoulder_plane": 104.2181521461602,
             "right_shoulder_plane": 90.33787057668782,
             "left_hip_plane": 98.04640641731073,
-            "right_hip_plane": 108.69667128804629
+            "right_hip_plane": 108.69667128804629,
+            "neck": 89.79206398019848,
+            "left_hip": 88.17330832363048,
+            "right_hip": 143.7909162462309,
+            "left_ankle": 148.30764563092887,
+            "right_ankle": 127.52778899947074,
+            "left_wrist": 115.78996737688905,
+            "right_wrist": 115.80500281472605
         }
     },
     {
@@ -371,7 +539,14 @@
             "left_shoulder_plane": 104.83534893647393,
             "right_shoulder_plane": 92.03423704418795,
             "left_hip_plane": 93.47812333468197,
-            "right_hip_plane": 103.44704057433019
+            "right_hip_plane": 103.44704057433019,
+            "neck": 86.77176260095437,
+            "left_hip": 99.29775850436319,
+            "right_hip": 144.0543823648615,
+            "left_ankle": 146.5964050972063,
+            "right_ankle": 129.563948757407,
+            "left_wrist": 107.02319363769173,
+            "right_wrist": 106.59837734495215
         }
     },
     {
@@ -386,7 +561,14 @@
             "left_shoulder_plane": 105.18645506809119,
             "right_shoulder_plane": 94.4613098342146,
             "left_hip_plane": 92.2196386471767,
-            "right_hip_plane": 101.53800139368222
+            "right_hip_plane": 101.53800139368222,
+            "neck": 85.24923585201344,
+            "left_hip": 110.25244680318215,
+            "right_hip": 134.89815570493565,
+            "left_ankle": 143.20193116690692,
+            "right_ankle": 127.23901828936178,
+            "left_wrist": 101.79122909825513,
+            "right_wrist": 98.47546695867828
         }
     },
     {
@@ -401,7 +583,14 @@
             "left_shoulder_plane": 105.88589922527366,
             "right_shoulder_plane": 94.46843173391122,
             "left_hip_plane": 87.12789799373978,
-            "right_hip_plane": 97.38541654915073
+            "right_hip_plane": 97.38541654915073,
+            "neck": 85.20234322300853,
+            "left_hip": 127.71279116707971,
+            "right_hip": 129.86235075422374,
+            "left_ankle": 122.96432680512677,
+            "right_ankle": 123.32034839966028,
+            "left_wrist": 105.08773146876337,
+            "right_wrist": 98.8362138308828
         }
     },
     {
@@ -416,7 +605,14 @@
             "left_shoulder_plane": 106.29493257484286,
             "right_shoulder_plane": 93.1163355263857,
             "left_hip_plane": 86.55334910462733,
-            "right_hip_plane": 100.34053818927076
+            "right_hip_plane": 100.34053818927076,
+            "neck": 84.22534106721206,
+            "left_hip": 133.63227334089265,
+            "right_hip": 129.91101014537097,
+            "left_ankle": 89.63207114095702,
+            "right_ankle": 107.19147975534655,
+            "left_wrist": 98.81261350168798,
+            "right_wrist": 94.00134436513173
         }
     }
 ]

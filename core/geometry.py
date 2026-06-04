@@ -18,19 +18,9 @@ class PhysioGeometry:
     def get_angle(a: Joint, b: Joint, c: Joint) -> float:
         """
         Calculates the absolute 3D angle at a specific vertex using vector dot products.
-        
         Uses the formula: theta = arccos( (ba . bc) / (|ba| * |bc|) )
         Includes mathematical safeguards against division by zero and floating-point 
         overflows that can cause arccos to return NaN.
-
-        Args:
-            a (Joint): The starting joint coordinate.
-            b (Joint): The vertex joint coordinate (the pivot point/angle center).
-            c (Joint): The ending joint coordinate.
-
-        Returns:
-            float: The calculated angle in degrees (0.0 to 180.0). Returns 0.0 
-                   if vector magnitudes are zero.
         """
         # Create 3D vectors relative to joint B
         ba = np.array([a.x - b.x, a.y - b.y, a.z - b.z])
@@ -40,6 +30,7 @@ class PhysioGeometry:
         # Prevent division by zero
         norm_ba = np.linalg.norm(ba)
         norm_bc = np.linalg.norm(bc)
+  
         if norm_ba == 0 or norm_bc == 0:
             return 0.0
 
@@ -53,18 +44,9 @@ class PhysioGeometry:
     def get_standard_angles(self, joints: List[Joint]) -> Dict[str, float]:
         """
         Extracts both standard anatomical bends and virtual transverse plane angles.
-
         Maps specific MediaPipe indices to physiotherapeutic joint names. To track 
         forward vs. lateral movement, it dynamically generates virtual "mid_shoulder" 
         and "mid_hip" joints to act as transverse plane anchors.
-
-        Args:
-            joints (List[Joint]): The full array of 33 extracted MediaPipe landmarks.
-
-        Returns:
-            Dict[str, float]: A dictionary mapping anatomical string names to 
-                              calculated degrees.
-                              Example: {"left_elbow": 145.2, "left_shoulder_plane": 92.1}
         """
         angles = {
             "left_elbow": self.get_angle(joints[11], joints[13], joints[15]),
@@ -75,7 +57,7 @@ class PhysioGeometry:
             "right_knee": self.get_angle(joints[24], joints[26], joints[28])
         }
 
-        # --- NEW: Virtual Joints for Plane Validation ---
+        # --- Virtual Joints for Plane Validation ---
         # Averages the left and right sides to create a center-mass anchor
         mid_shoulder = Joint(
             x=(joints[11].x + joints[12].x) / 2.0,
@@ -91,10 +73,20 @@ class PhysioGeometry:
             visibility=min(joints[23].visibility, joints[24].visibility)
         )
 
-        # --- NEW: Transverse Plane Extraction ---
+        # --- Transverse Plane Extraction ---
         angles["left_shoulder_plane"] = self.get_angle(mid_shoulder, joints[11], joints[13])
         angles["right_shoulder_plane"] = self.get_angle(mid_shoulder, joints[12], joints[14])
         angles["left_hip_plane"] = self.get_angle(mid_hip, joints[23], joints[25])
         angles["right_hip_plane"] = self.get_angle(mid_hip, joints[24], joints[26])
+
+        # --- NEW: Neck and Peripheral Joints ---
+        # Measures the angle from Left Shoulder -> Mid-Shoulder -> Nose (90 degrees is neutral)
+        angles["neck"] = self.get_angle(joints[11], mid_shoulder, joints[0])
+        angles["left_hip"] = self.get_angle(joints[11], joints[23], joints[25])
+        angles["right_hip"] = self.get_angle(joints[12], joints[24], joints[26])
+        angles["left_ankle"] = self.get_angle(joints[25], joints[27], joints[31])
+        angles["right_ankle"] = self.get_angle(joints[26], joints[28], joints[32])
+        angles["left_wrist"] = self.get_angle(joints[13], joints[15], joints[19])
+        angles["right_wrist"] = self.get_angle(joints[14], joints[16], joints[20])
 
         return angles

@@ -32,9 +32,12 @@ ROOT_DIR = Path(__file__).parent
 
 # High-visibility landmarks array index map for painting skeletal overlay lines
 SKELETON_CONNECTIONS = [
-    (11, 13), (13, 15), (12, 14), (14, 16),
-    (11, 12), (23, 24), (11, 23), (12, 24),
-    (23, 25), (25, 27), (24, 26), (26, 28)
+    (11, 13), (13, 15), (12, 14), (14, 16), # Arms
+    (11, 12), (23, 24), (11, 23), (12, 24), # Torso box
+    (23, 25), (25, 27), (24, 26), (26, 28), # Legs
+    (0, 11), (0, 12),                       # Neck/Head
+    (15, 19), (16, 20),                     # Hands
+    (27, 31), (28, 32)                      # Feet
 ]
 
 class PhysioProcessor(VideoProcessorBase):
@@ -66,7 +69,12 @@ class PhysioProcessor(VideoProcessorBase):
             "left_shoulder": [23, 11, 13], "right_shoulder": [24, 12, 14],
             "left_knee": [23, 25, 27], "right_knee": [24, 26, 28],
             "left_shoulder_plane": [11, 12, 13], "right_shoulder_plane": [11, 12, 14],
-            "left_hip_plane": [23, 24, 25], "right_hip_plane": [23, 24, 26]
+            "left_hip_plane": [23, 24, 25], "right_hip_plane": [23, 24, 26],
+            # --- NEW DEPENDENCIES ---
+            "neck": [0, 11, 12], # Hips removed for close-up camera framing
+            "left_hip": [11, 23, 25], "right_hip": [12, 24, 26],
+            "left_ankle": [25, 27, 31], "right_ankle": [26, 28, 32],
+            "left_wrist": [13, 15, 19], "right_wrist": [14, 16, 20]
         }
 
     def draw_skeleton(self, img, joints):
@@ -83,7 +91,8 @@ class PhysioProcessor(VideoProcessorBase):
                 pt2 = (int(joints[p2].screen_x * w), int(joints[p2].screen_y * h))
                 cv2.line(img, pt1, pt2, (255, 255, 255), 3)
 
-        for idx in [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]:
+        # Updated array to include 0 (nose), 19/20 (fingers), 31/32 (toes)
+        for idx in [0, 11, 12, 13, 14, 15, 16, 19, 20, 23, 24, 25, 26, 27, 28, 31, 32]:
             if joints[idx].visibility > 0.5:
                 cx, cy = int(joints[idx].screen_x * w), int(joints[idx].screen_y * h)
                 cv2.circle(img, (cx, cy), 6, (0, 255, 0), -1)
@@ -94,10 +103,6 @@ class PhysioProcessor(VideoProcessorBase):
         Extracts the uncompressed image matrix, isolates skeletal landmarks, extracts 
         geometric coordinates while checking visibility bounds to ignore occluded fields, 
         and updates the shared reference metrics structure.
-        Args:
-            frame (av.VideoFrame): Immediate raw video frame from the client web browser.
-        Returns:
-            av.VideoFrame: The annotated frame object packed back into WebRTC format specifications.
         """
         img = frame.to_ndarray(format="bgr24")
         joints = self.engine.process_frame(img)
@@ -218,7 +223,6 @@ def render_upload_view():
             st.success("✅ Master registry updated successfully!")
 
         # 5. Clear caches and prompt restart
-        # st.balloons()
         st.info("🎉 Training complete! The system has mapped the new physics limits. Refresh the page to load the new registry in the Live Tracker.")
 
 def main():
@@ -322,9 +326,6 @@ def main():
 
         with col2:
             st.markdown("### 2. Live Tracking")
-            # --- AUDIO FEEDBACK FIX ---
-            # media_stream_constraints are set to disable the microphone ("audio": False)
-            # This prevents the browser from picking up the TTS output and creating an echo loop.
             webrtc_ctx = webrtc_streamer(
                 key="physio-tracker",
                 video_processor_factory=PhysioProcessor,
@@ -340,13 +341,13 @@ def main():
             rep_ui = st.empty()
             score_ui = st.empty()
             state_ui = st.empty()
-             
+            
             if webrtc_ctx.state.playing and webrtc_ctx.video_processor:
                 webrtc_ctx.video_processor.joint_names = primary_joints
                 
                 if not webrtc_ctx.video_processor.judge:
                     webrtc_ctx.video_processor.judge = ROMJudge(judge_config)
-                 
+                
                 # Active background polling loop driving visual component syncing
                 while webrtc_ctx.state.playing:
                     metrics = webrtc_ctx.video_processor.metrics
@@ -430,7 +431,6 @@ def main():
                             st.session_state.last_speech = tts_text
                             st.session_state.last_speech_time = current_time
                             
-                            # Inject non-blocking JavaScript SpeechSynthesis hooks
                             js_code = f"""
                                 <script>
                                     var synth = window.parent.speechSynthesis;
