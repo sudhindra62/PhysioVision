@@ -462,9 +462,9 @@ def main():
                     rep_ui.markdown(f"<h1 style='text-align: center; font-size: 60px;'>Reps: {metrics['reps']}</h1>", unsafe_allow_html=True)
                     score_ui.markdown(f"""
                         <div style='text-align: center;'>
-                            <h3 style='margin-bottom: 0;'>Session Average</h3>
+                            <h3 style='margin-bottom: 0;'>Last Rep:</h3>
                             <h1 style='color: {score_color}; font-size: 80px; margin-top: -10px;'>{metrics['last_score']}%</h1>
-                            <p style='color: gray; font-size: 20px;'>Last Rep: {metrics['avg_score']}% | Motion: {metrics['progress']}%</p>
+                            <p style='color: gray; font-size: 20px;'>Session Average: {metrics['avg_score']}% | Motion: {metrics['progress']}%</p>
                         </div>
                     """, unsafe_allow_html=True)
                     state_ui.markdown(f"<h3 style='text-align: center; color: {state_color};'>{metrics['state'].replace('_', ' ')}</h3>", unsafe_allow_html=True)
