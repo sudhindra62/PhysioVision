@@ -1,14 +1,14 @@
-# 🧠 PhysioTrack AI
+# 🧠 PhysioVision
 
 > **An intelligent real-time physiotherapy monitoring and biomechanical correction system powered by Computer Vision, Pose Estimation, and Geometric Motion Analysis.**
 
-PhysioTrack AI transforms traditional physiotherapy into a data-driven rehabilitation experience by automatically evaluating exercise form, tracking range of motion, and delivering real-time corrective feedback.
+PhysioVision transforms traditional physiotherapy into a data-driven rehabilitation experience by automatically evaluating exercise form, tracking range of motion, and delivering real-time corrective feedback.
 
 ---
 
 ## 📌 Overview
 
-PhysioTrack AI is a deterministic biomechanical evaluation engine designed for rehabilitation and physiotherapy exercises.
+PhysioVision is a deterministic biomechanical evaluation engine designed for rehabilitation and physiotherapy exercises.
 
 The system automatically converts reference exercise videos into mathematical motion profiles and JSON-based rule sets. During live sessions, user movements are compared against these calibrated baselines to evaluate posture quality, movement accuracy, range of motion, and exercise consistency.
 
